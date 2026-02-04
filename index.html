@@ -17,11 +17,12 @@
         theme: {
           extend: {
             colors: {
-              ink: "#0a0a0a",
-              slate: "#141414",
-              line: "#2a2a2a",
-              steel: "#b9b9b9",
-              accent: "#d7d7d7",
+              ink: "rgb(var(--ink) / <alpha-value>)",
+              slate: "rgb(var(--slate) / <alpha-value>)",
+              line: "rgb(var(--line) / <alpha-value>)",
+              steel: "rgb(var(--steel) / <alpha-value>)",
+              accent: "rgb(var(--accent) / <alpha-value>)",
+              fg: "rgb(var(--fg) / <alpha-value>)",
             },
             letterSpacing: {
               luxe: "0.18em",
@@ -41,6 +42,21 @@
     <style>
       :root {
         color-scheme: dark;
+        --ink: 10 10 10;
+        --slate: 20 20 20;
+        --line: 42 42 42;
+        --steel: 185 185 185;
+        --accent: 215 215 215;
+        --fg: 255 255 255;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --ink: 248 245 240;
+        --slate: 255 255 255;
+        --line: 220 212 202;
+        --steel: 92 90 86;
+        --accent: 22 22 22;
+        --fg: 24 24 24;
       }
       .reveal {
         opacity: 0;
@@ -103,7 +119,7 @@
       }
     </style>
   </head>
-  <body class="relative bg-ink text-white antialiased font-body">
+  <body class="relative bg-ink text-fg antialiased font-body">
     <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div class="glow-orb absolute -top-40 right-[-5%] h-80 w-80 rounded-full bg-accent/10 blur-3xl"></div>
       <div class="glow-orb delay absolute bottom-[-20%] left-[-10%] h-[26rem] w-[26rem] rounded-full bg-white/5 blur-3xl"></div>
@@ -116,7 +132,14 @@
           <div>
             <div>
               <p class="text-xs uppercase tracking-luxe text-steel">Private Product Roster</p>
-              <h1 class="text-4xl font-semibold tracking-logo font-display">1898</h1>
+              <div class="mt-2">
+                <img
+                  src="Fotos/logoHeader.png"
+                  alt="1898"
+                  class="h-10 w-auto object-contain sm:h-12"
+                  loading="lazy"
+                />
+              </div>
             </div>
             <p class="mt-3 max-w-md text-sm text-steel">
               Internal reference for product status, documentation, and field notes.
@@ -137,20 +160,66 @@
               id="searchInput"
               type="search"
               placeholder="Search by product name or description"
-              class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-white placeholder:text-steel transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+              class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg placeholder:text-steel transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
             />
           </div>
-          <div>
-            <label class="text-xs uppercase tracking-widest text-steel" for="statusFilter">Status</label>
-            <select
-              id="statusFilter"
-              class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-white transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+          <div class="flex items-end gap-3">
+            <div class="flex-1">
+              <label class="text-xs uppercase tracking-widest text-steel" for="statusFilter">Status</label>
+              <select
+                id="statusFilter"
+                class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+              >
+                <option value="all">All Status</option>
+                <option value="production">Production</option>
+                <option value="development">Development</option>
+                <option value="discontinued">Discontinued</option>
+              </select>
+            </div>
+            <button
+              id="themeToggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Switch to light mode"
+              class="group grid h-12 w-12 place-items-center rounded-full border border-line/80 bg-slate/80 text-steel transition hover:border-accent/60 hover:text-fg focus:outline-none focus:ring-1 focus:ring-accent/40"
             >
-              <option value="all">All Status</option>
-              <option value="production">Production</option>
-              <option value="development">Development</option>
-              <option value="discontinued">Discontinued</option>
-            </select>
+              <span class="relative h-5 w-5">
+                <svg
+                  class="icon-sun absolute inset-0 h-5 w-5 opacity-0 transition duration-300 group-hover:opacity-100"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <path d="M12 2v2"></path>
+                  <path d="M12 20v2"></path>
+                  <path d="M4.93 4.93l1.41 1.41"></path>
+                  <path d="M17.66 17.66l1.41 1.41"></path>
+                  <path d="M2 12h2"></path>
+                  <path d="M20 12h2"></path>
+                  <path d="M4.93 19.07l1.41-1.41"></path>
+                  <path d="M17.66 6.34l1.41-1.41"></path>
+                </svg>
+                <svg
+                  class="icon-moon absolute inset-0 h-5 w-5 transition duration-300"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M21 12.8A8.5 8.5 0 0 1 11.2 3a8.5 8.5 0 1 0 9.8 9.8z"
+                  ></path>
+                </svg>
+              </span>
+            </button>
           </div>
         </div>
       </section>
@@ -240,6 +309,24 @@
               issue: "Gauntlet too narrow for cold weather.",
               resolution: "Wider opening led to V2.",
             },
+            {
+              issue:
+                "No clear way to attach the glove to the apron (missing hook/loop system between glove and apron).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "Trigger snap / snap hook hardware feels weaker than competitor versions (inferior robustness).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "Snap hook finish does not match the desired roughed-out look (competitors buy shiny hardware and condition/tumble it to dull the finish).",
+              resolution:
+                "",
+            },
           ],
           notes: [
             "Order additional inventory (focus on smaller sizes).",
@@ -253,6 +340,13 @@
           status: "development",
           description:
             "Based on V1 with: wider gauntlet opening for thick winter jackets; remove metal D-ring -> leather loop; more finger protection w/ extra leather layers. No multi-width variants; tracked as V2.",
+          images: [
+            {
+              src: "Fotos/StantonV2.jpeg",
+              alt: "Stanton Glove V2 sample",
+              fit: "contain",
+            },
+          ],
           techPacks: [
             {
               label:
@@ -275,6 +369,13 @@
           status: "development",
           description:
             "Originated from incorrect TIG sample with added protection; feedback from David Madero suggests short cuff + higher protection suits oxy-acetylene welding.",
+          images: [
+            {
+              src: "Fotos/TIGGlove.jpeg",
+              alt: "Oxyacetylene glove sample (TIG reference)",
+              fit: "contain",
+            },
+          ],
           techPacks: [],
           issues: [],
           notes: [
@@ -388,6 +489,24 @@
               issue: "Full-grain leather tested but underperformed.",
               resolution: "Abandoned; returned to suede.",
             },
+            {
+              issue:
+                "Need shorter straps for compact sizes (current strap length not ideal).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "No clear way to attach gloves to the apron (D-ring exists but there is no functional glove connection).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "Rear strap system does not allow the welder to easily put on/remove the apron while wearing a helmet (competitor uses wider straps that enable this).",
+              resolution:
+                "",
+            },
           ],
           notes: [],
         },
@@ -424,6 +543,7 @@
       const historicalList = document.getElementById("historicalList");
       const searchInput = document.getElementById("searchInput");
       const statusFilter = document.getElementById("statusFilter");
+      const themeToggle = document.getElementById("themeToggle");
 
       const sanitize = (value) => value.toLowerCase().trim();
       const escapeHTML = (value) =>
@@ -466,6 +586,46 @@
 
       const imageState = {};
 
+      const getImageFitClass = (image) =>
+        image && image.fit === "contain" ? "object-contain" : "object-cover";
+
+      const getImageSizingClass = () => "h-full w-full";
+
+      const resetImageTransform = (img) => {
+        img.style.transform = "";
+        img.style.transformOrigin = "";
+      };
+
+      const applyImageTransform = (img, image) => {
+        if (!image || !image.rotate) {
+          resetImageTransform(img);
+          return;
+        }
+        const container = img.parentElement;
+        if (!container) return;
+        const { clientWidth, clientHeight } = container;
+        if (!clientWidth || !clientHeight) return;
+        const scale =
+          clientWidth >= clientHeight
+            ? clientHeight / clientWidth
+            : clientWidth / clientHeight;
+        img.style.transformOrigin = "center";
+        img.style.transform = `rotate(${image.rotate}deg) scale(${scale})`;
+      };
+
+      const applyRotations = () => {
+        document.querySelectorAll("[data-image]").forEach((img) => {
+          const card = img.closest("[data-product-id]");
+          if (!card) return;
+          const productId = card.getAttribute("data-product-id");
+          const product = products.find((item) => item.id === productId);
+          if (!product || !product.images || !product.images.length) return;
+          const index = imageState[productId] ?? 0;
+          const image = product.images[index];
+          applyImageTransform(img, image);
+        });
+      };
+
       const renderImageArea = (product) => {
         const images = product.images || [];
         if (!images.length) {
@@ -479,6 +639,9 @@
 
         const index = imageState[product.id] ?? 0;
         const image = images[index];
+        const fitClass = getImageFitClass(image);
+        const sizeClass = getImageSizingClass(image);
+        const hoverClass = image.rotate ? "" : "group-hover:scale-[1.03]";
         const total = images.length;
         const navControls =
           total > 1
@@ -520,12 +683,12 @@
             : "";
 
         return `
-          <div class="group relative h-56 overflow-hidden border border-line bg-ink">
+          <div class="group relative flex h-56 items-center justify-center overflow-hidden border border-line bg-ink">
             <img
               data-image="true"
               src="${escapeHTML(image.src)}"
               alt="${escapeHTML(image.alt)}"
-              class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+              class="${sizeClass} ${fitClass} transition duration-500 ${hoverClass}"
               loading="lazy"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
@@ -542,6 +705,21 @@
         if (!img) return;
         img.src = image.src;
         img.alt = image.alt;
+        img.classList.remove(
+          "object-cover",
+          "object-contain",
+          "group-hover:scale-[1.03]",
+          "h-full",
+          "w-full",
+          "max-h-full",
+          "max-w-full"
+        );
+        img.classList.add(...getImageFitClass(image).split(" "));
+        img.classList.add(...getImageSizingClass(image).split(" "));
+        if (!image.rotate) {
+          img.classList.add("group-hover:scale-[1.03]");
+        }
+        applyImageTransform(img, image);
         const count = card.querySelector("[data-image-count]");
         if (count) {
           count.textContent = `${index + 1} / ${images.length}`;
@@ -558,6 +736,7 @@
           productGrid.innerHTML =
             '<div class="col-span-full rounded-none border border-line bg-slate p-8 text-center text-sm text-steel">No products match your filters.</div>';
           resultsMeta.textContent = "0 products found";
+          requestAnimationFrame(applyRotations);
           return;
         }
 
@@ -575,7 +754,7 @@
                     ${product.techPacks
                       .map(
                         (pack) =>
-                          `<li><a class="text-sm text-white underline decoration-line underline-offset-4 hover:text-accent" href="${escapeHTML(
+                          `<li><a class="text-sm text-fg underline decoration-line underline-offset-4 hover:text-accent" href="${escapeHTML(
                             pack.url
                           )}">${escapeHTML(pack.label)}</a></li>`
                       )
@@ -658,6 +837,7 @@
           `;
           })
           .join("");
+        requestAnimationFrame(applyRotations);
       };
 
       const renderHistorical = () => {
@@ -729,6 +909,40 @@
 
       renderProducts(products);
       renderHistorical();
+
+      window.addEventListener("resize", applyRotations);
+      requestAnimationFrame(applyRotations);
+
+      const setTheme = (mode) => {
+        document.documentElement.dataset.theme = mode;
+        if (!themeToggle) return;
+        const isLight = mode === "light";
+        themeToggle.setAttribute("aria-pressed", isLight ? "true" : "false");
+        themeToggle.setAttribute(
+          "aria-label",
+          isLight ? "Switch to dark mode" : "Switch to light mode"
+        );
+        themeToggle
+          .querySelector(".icon-sun")
+          ?.classList.toggle("opacity-0", !isLight);
+        themeToggle
+          .querySelector(".icon-moon")
+          ?.classList.toggle("opacity-0", isLight);
+      };
+
+      const storedTheme = localStorage.getItem("theme");
+      const prefersLight =
+        window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      setTheme(storedTheme || (prefersLight ? "light" : "dark"));
+
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const nextTheme =
+            document.documentElement.dataset.theme === "light" ? "dark" : "light";
+          localStorage.setItem("theme", nextTheme);
+          setTheme(nextTheme);
+        });
+      }
     </script>
   </body>
 </html>
