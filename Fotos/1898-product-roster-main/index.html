@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>1898 Product Roster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink: "rgb(var(--ink) / <alpha-value>)",
+              slate: "rgb(var(--slate) / <alpha-value>)",
+              line: "rgb(var(--line) / <alpha-value>)",
+              steel: "rgb(var(--steel) / <alpha-value>)",
+              accent: "rgb(var(--accent) / <alpha-value>)",
+              fg: "rgb(var(--fg) / <alpha-value>)",
+            },
+            letterSpacing: {
+              luxe: "0.18em",
+              logo: "0.28em",
+            },
+            boxShadow: {
+              card: "0 0 0 1px #2a2a2a",
+            },
+            fontFamily: {
+              body: ['"Manrope"', "sans-serif"],
+              display: ['"Cormorant Garamond"', "serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: 10 10 10;
+        --slate: 20 20 20;
+        --line: 42 42 42;
+        --steel: 185 185 185;
+        --accent: 215 215 215;
+        --fg: 255 255 255;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --ink: 248 245 240;
+        --slate: 255 255 255;
+        --line: 220 212 202;
+        --steel: 92 90 86;
+        --accent: 22 22 22;
+        --fg: 24 24 24;
+      }
+      .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp 0.7s ease forwards;
+      }
+      .glow-orb {
+        animation: float 14s ease-in-out infinite;
+      }
+      .glow-orb.delay {
+        animation-delay: -6s;
+      }
+      .card-plate {
+        position: relative;
+        overflow: hidden;
+      }
+      .card-plate::before {
+        content: "";
+        position: absolute;
+        inset: -40% -20%;
+        background: radial-gradient(
+          circle at top,
+          rgba(255, 255, 255, 0.08),
+          transparent 55%
+        );
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        pointer-events: none;
+      }
+      .card-plate:hover::before {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .image-nav {
+        backdrop-filter: blur(8px);
+      }
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-22px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal,
+        .glow-orb {
+          animation: none !important;
+          transform: none !important;
+          opacity: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="relative bg-ink text-fg antialiased font-body">
+    <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div class="glow-orb absolute -top-40 right-[-5%] h-80 w-80 rounded-full bg-accent/10 blur-3xl"></div>
+      <div class="glow-orb delay absolute bottom-[-20%] left-[-10%] h-[26rem] w-[26rem] rounded-full bg-white/5 blur-3xl"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.06),_transparent_60%)]"></div>
+      <div class="absolute inset-0 bg-[linear-gradient(120deg,_rgba(255,255,255,0.02),_transparent_40%,_rgba(255,255,255,0.03))]"></div>
+    </div>
+    <main class="min-h-screen">
+      <header class="border-b border-line/80">
+        <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-6 py-8">
+          <div>
+            <div>
+              <p class="text-xs uppercase tracking-luxe text-steel">Private Product Roster</p>
+              <div class="mt-2">
+                <img
+                  src="Fotos/logoHeader.png"
+                  alt="1898"
+                  class="h-10 w-auto object-contain sm:h-12"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            <p class="mt-3 max-w-md text-sm text-steel">
+              Internal reference for product status, documentation, and field notes.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-xs text-steel">
+            <span class="rounded-full border border-line/80 px-3 py-1">Internal Use Only</span>
+            <span class="rounded-full border border-line/80 px-3 py-1">Updated Feb 03, 2026</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="mx-auto max-w-6xl px-6 py-10">
+        <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel" for="searchInput">Search</label>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Search by product name or description"
+              class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg placeholder:text-steel transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+            />
+          </div>
+          <div class="flex items-end gap-3">
+            <div class="flex-1">
+              <label class="text-xs uppercase tracking-widest text-steel" for="statusFilter">Status</label>
+              <select
+                id="statusFilter"
+                class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+              >
+                <option value="all">All Status</option>
+                <option value="production">Production</option>
+                <option value="development">Development</option>
+                <option value="discontinued">Discontinued</option>
+              </select>
+            </div>
+            <button
+              id="themeToggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Switch to light mode"
+              class="group grid h-12 w-12 place-items-center rounded-full border border-line/80 bg-slate/80 text-steel transition hover:border-accent/60 hover:text-fg focus:outline-none focus:ring-1 focus:ring-accent/40"
+            >
+              <span class="relative h-5 w-5">
+                <svg
+                  class="icon-sun absolute inset-0 h-5 w-5 opacity-0 transition duration-300 group-hover:opacity-100"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <path d="M12 2v2"></path>
+                  <path d="M12 20v2"></path>
+                  <path d="M4.93 4.93l1.41 1.41"></path>
+                  <path d="M17.66 17.66l1.41 1.41"></path>
+                  <path d="M2 12h2"></path>
+                  <path d="M20 12h2"></path>
+                  <path d="M4.93 19.07l1.41-1.41"></path>
+                  <path d="M17.66 6.34l1.41-1.41"></path>
+                </svg>
+                <svg
+                  class="icon-moon absolute inset-0 h-5 w-5 transition duration-300"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M21 12.8A8.5 8.5 0 0 1 11.2 3a8.5 8.5 0 1 0 9.8 9.8z"
+                  ></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl px-6 pb-12">
+        <div id="resultsMeta" class="mb-6 text-xs uppercase tracking-widest text-steel"></div>
+        <div id="productGrid" class="grid gap-6 md:grid-cols-2"></div>
+      </section>
+
+      <section class="mx-auto max-w-6xl px-6 pb-20">
+        <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-luxe text-steel">Historical Notes &amp; Decisions</p>
+            <h2 class="mt-2 text-2xl font-semibold font-display">Historical Notes &amp; Decisions</h2>
+          </div>
+          <span class="text-xs uppercase tracking-widest text-steel">Reference Only</span>
+        </div>
+        <div id="historicalList" class="space-y-6"></div>
+      </section>
+    </main>
+
+    <script>
+      const products = [
+        {
+          id: "stanton-glove-v1",
+          name: "Stanton Glove",
+          version: "V1",
+          status: "production",
+          description:
+            "MIG welder glove - First generation that will be superseeded with Gen 2",
+          images: [
+            { src: "Fotos/StantonV1Black.JPG", alt: "Stanton Glove V1 in black" },
+            { src: "Fotos/StantonV1Gold.JPG", alt: "Stanton Glove V1 in gold" },
+          ],
+          techPacks: [
+            {
+              label:
+                '05/12/22 - Updated Tech Pack; 6" gauntlet, full Kevlar knit lining, removed decorative stitch, seams turned in.',
+              url: "./TechPacks/1898_GLOVES_UPDATED_TECH_120522.pdf",
+            },
+            {
+              label:
+                "09/18/23 - Stanton Solid Tech Pack; nubuck (0.8-1.0mm), Kevlar knit lining, Kevlar thread, D-ring, solid styling.",
+              url: "./TechPacks/1898_STANTON_GLOVES_SOLID_LATEST_091823_SM.pdf",
+            },
+            {
+              label: "12/16/23 - Final Samples; reference sample set.",
+              url: "./TechPacks/1898_GLOVES_FINAL_SAMPLES_1223.pdf",
+            },
+            {
+              label:
+                "02/24 - Final Samples revision; black Kevlar linings + printed label.",
+              url: "./TechPacks/1898_GLOVES_FINAL_SAMPLES_0224.pdf",
+            },
+          ],
+          issues: [
+            {
+              issue: "Runs small / inconsistent sizing.",
+              resolution: "Advise size up; sizing refined across rounds.",
+            },
+            {
+              issue: "Inner finger wears out.",
+              resolution: "Extra padding + reinforcement zones.",
+            },
+            {
+              issue: "Seam fails thumb-index web.",
+              resolution: "Reinforced construction in web.",
+            },
+            {
+              issue: "Internal seams discomfort.",
+              resolution: "Turned finger seams outward.",
+            },
+            {
+              issue: "Blowouts at stress seams.",
+              resolution:
+                "Improved seam placement + construction via durability testing.",
+            },
+            {
+              issue: "Heat protection insufficient early.",
+              resolution: "Full Kevlar knit lining throughout.",
+            },
+            {
+              issue: "Hardware inconsistencies.",
+              resolution: "Standardized D-ring (V1); later removed for V2.",
+            },
+            {
+              issue: "Gauntlet too narrow for cold weather.",
+              resolution: "Wider opening led to V2.",
+            },
+            {
+              issue:
+                "No clear way to attach the glove to the apron (missing hook/loop system between glove and apron).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "Trigger snap / snap hook hardware feels weaker than competitor versions (inferior robustness).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "Snap hook finish does not match the desired roughed-out look (competitors buy shiny hardware and condition/tumble it to dull the finish).",
+              resolution:
+                "",
+            },
+          ],
+          notes: [
+            "Order additional inventory (focus on smaller sizes).",
+            "Keep collecting fit feedback (especially as V2 is finalized).",
+          ],
+        },
+        {
+          id: "stanton-glove-v2",
+          name: "Stanton Glove",
+          version: "V2",
+          status: "development",
+          description:
+            "Based on V1 with: wider gauntlet opening for thick winter jackets; remove metal D-ring -> leather loop; more finger protection w/ extra leather layers. No multi-width variants; tracked as V2.",
+          images: [
+            {
+              src: "Fotos/StantonV2.jpeg",
+              alt: "Stanton Glove V2 sample",
+              fit: "contain",
+            },
+          ],
+          techPacks: [
+            {
+              label:
+                "Inherits Stanton baseline chain until updated V2 pattern/tech pack arrives.",
+              url: "#",
+            },
+          ],
+          issues: [],
+          notes: [
+            "Exploring leather booking ~300 pairs (initial run likely ~150).",
+            "Confirm leather booking + schedule with Kabir.",
+            "Request updated V2 tech pack/pattern explicitly calling out wider opening/circumference.",
+            "Update Shopify naming: Stanton V1 vs Stanton V2.",
+          ],
+        },
+        {
+          id: "oxyacetylene-glove",
+          name: "Oxyacetylene Glove",
+          version: "",
+          status: "development",
+          description:
+            "Originated from incorrect TIG sample with added protection; feedback from David Madero suggests short cuff + higher protection suits oxy-acetylene welding.",
+          images: [
+            {
+              src: "Fotos/OxyGlove.jpeg",
+              alt: "Oxyacetylene glove sample",
+              fit: "contain",
+            },
+          ],
+          techPacks: [],
+          issues: [],
+          notes: [
+            "Await final field feedback from David Madero (approval gate).",
+            "If approved, proceed with limited run (20-30 pairs).",
+            "One name only (avoid multiple names).",
+          ],
+        },
+        {
+          id: "tig-unlined-glove",
+          name: "TIG Unlined Glove",
+          version: "",
+          status: "development",
+          description:
+            "TIG must be unlined for tactile feel/dexterity. Factory produced samples incorrectly (lined) - rejected.",
+          images: [
+            {
+              src: "Fotos/TIGGlove.jpeg",
+              alt: "TIG unlined glove sample",
+              fit: "contain",
+            },
+          ],
+          techPacks: [
+            {
+              label:
+                "Use unlined baseline reference until Kabir provides specific TIG unlined tech pack.",
+              url: "#",
+            },
+          ],
+          issues: [
+            {
+              issue: "Factory produced samples incorrectly (lined).",
+              resolution: "Rejected; awaiting unlined samples.",
+            },
+          ],
+          notes: [
+            "Receive corrected unlined samples from Kabir.",
+            "Expect 1-2 revision rounds for fit tuning before approval.",
+          ],
+        },
+        {
+          id: "miner-glove",
+          name: "Miner Glove",
+          version: "",
+          status: "discontinued",
+          description:
+            "Not short-term. Priority: Stanton V2 + Oxy + TIG unlined first, then revisit Miner.",
+          images: [
+            {
+              src: "Fotos/MiningGlove.jpeg",
+              alt: "Miner glove sample",
+              fit: "contain",
+            },
+          ],
+          techPacks: [],
+          issues: [],
+          notes: [
+            "Collect more field feedback.",
+            "Decide whether to proceed to prototype tech pack or keep parked.",
+          ],
+        },
+        {
+          id: "iron-jim-v1",
+          name: "Welding Apron",
+          version: "Gen1",
+          status: "production",
+          description:
+            "Leather welding apron with X-back strap system. Single version evolved via internal refinements: strap ergonomics, weight distribution, sizing, durability.  Gen 2 has waist strap",
+          images: [
+            { src: "Fotos/ApronBlack.jpg", alt: "Iron Jim V1 apron in black" },
+            { src: "Fotos/ApronGold.jpg", alt: "Iron Jim V1 apron in gold" },
+          ],
+          techPacks: [
+            {
+              label:
+                "07/18/23 - Apron Tech Pack (Split Front X-Back); base design with X-back system.",
+              url: "./TechPacks/1898_APRON_TECH_FINAL.pdf",
+            },
+            {
+              label:
+                "01/17/24 - Final Samples Tech Pack; updated specifications for the production version.",
+              url: "./TechPacks/1898_APRONS_FINAL_SAMPLES_0124.pdf",
+            },
+            {
+              label:
+                "02/24 - Revised Final Samples Tech Pack; post-review revision (revised date).",
+              url: "./TechPacks/1898_APRONS_FINAL_SAMPLES_0224.pdf",
+            },
+            {
+              label:
+                "09/27/24 - Features Annotated; front/back feature annotations.",
+              url: "./TechPacks/1898_APRON_ANNOTATED.pdf",
+            },
+          ],
+          issues: [
+            {
+              issue: "Shoulder straps come loose.",
+              resolution: "Added back connector strap.",
+            },
+            {
+              issue: "Uneven weight distribution.",
+              resolution: "X-back system.",
+            },
+            {
+              issue: "Fit inconsistency.",
+              resolution: "Standardized sizing using Medium reference.",
+            },
+            {
+              issue: "Bulky seams.",
+              resolution: "Shaved edges / reduced bulk.",
+            },
+            {
+              issue: "Hardware durability.",
+              resolution: "Standardized hardware + eyelet spacing 2cm.",
+            },
+            {
+              issue: "Pocket usability.",
+              resolution: "Corrected sizing/placement.",
+            },
+            {
+              issue: "Strap adjustment slips.",
+              resolution: "Strap keepers/belt loops.",
+            },
+            {
+              issue: "Full-grain leather tested but underperformed.",
+              resolution: "Abandoned; returned to suede.",
+            },
+            {
+              issue:
+                "Need shorter straps for compact sizes (current strap length not ideal).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "No clear way to attach gloves to the apron (D-ring exists but there is no functional glove connection).",
+              resolution:
+                "",
+            },
+            {
+              issue:
+                "Rear strap system does not allow the welder to easily put on/remove the apron while wearing a helmet (competitor uses wider straps that enable this).",
+              resolution:
+                "",
+            },
+          ],
+          notes: [],
+        },
+      ];
+
+      const historical = [
+        {
+          id: "material-testing-full-grain-vs-sueded",
+          title: "Material & Testing Notes - Full Grain vs Sueded Leather",
+          updated: "01/29/2026",
+          summary: [
+            "Explored full grain leather (smooth/glossy like motorcycle jacket leather) for gloves.",
+            "Under welding heat: discoloration, shrinkage/pulling, reduced heat protection vs sueded.",
+            "Feedback (Pedro Drops) confirmed full grain underperformed.",
+            "Decision: abandon full grain for glove construction; continue with sueded leather going forward.",
+          ],
+        },
+      ];
+
+      const statusLabels = {
+        production: "Production",
+        development: "Development",
+        discontinued: "Discontinued",
+      };
+
+      const statusStyles = {
+        production: "border-emerald-400/60 text-emerald-200 bg-emerald-500/10",
+        development: "border-amber-300/60 text-amber-200 bg-amber-400/10",
+        discontinued: "border-stone-500/60 text-stone-300 bg-stone-500/10",
+      };
+
+      const productGrid = document.getElementById("productGrid");
+      const resultsMeta = document.getElementById("resultsMeta");
+      const historicalList = document.getElementById("historicalList");
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+      const themeToggle = document.getElementById("themeToggle");
+
+      const sanitize = (value) => value.toLowerCase().trim();
+      const escapeHTML = (value) =>
+        String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+
+      const icons = {
+        tech: `<svg aria-hidden="true" class="h-4 w-4 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"></path>
+          <path d="M14 3v5h5"></path>
+        </svg>`,
+        issues: `<svg aria-hidden="true" class="h-4 w-4 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v6"></path>
+          <path d="M12 16h.01"></path>
+        </svg>`,
+        notes: `<svg aria-hidden="true" class="h-4 w-4 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M8 6h12"></path>
+          <path d="M8 12h12"></path>
+          <path d="M8 18h12"></path>
+          <path d="M4 6h.01"></path>
+          <path d="M4 12h.01"></path>
+          <path d="M4 18h.01"></path>
+        </svg>`,
+        arrowLeft: `<svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M15 18l-6-6 6-6"></path>
+        </svg>`,
+        arrowRight: `<svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 6l6 6-6 6"></path>
+        </svg>`,
+        camera: `<svg aria-hidden="true" class="h-5 w-5 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a1 1 0 0 1 1-1z"></path>
+          <circle cx="12" cy="13" r="3.5"></circle>
+        </svg>`,
+      };
+
+      const imageState = {};
+
+      const getImageFitClass = (image) =>
+        image && image.fit === "contain" ? "object-contain" : "object-cover";
+
+      const getImageSizingClass = () => "h-full w-full";
+
+      const resetImageTransform = (img) => {
+        img.style.transform = "";
+        img.style.transformOrigin = "";
+      };
+
+      const applyImageTransform = (img, image) => {
+        if (!image || !image.rotate) {
+          resetImageTransform(img);
+          return;
+        }
+        const container = img.parentElement;
+        if (!container) return;
+        const { clientWidth, clientHeight } = container;
+        if (!clientWidth || !clientHeight) return;
+        const scale =
+          clientWidth >= clientHeight
+            ? clientHeight / clientWidth
+            : clientWidth / clientHeight;
+        img.style.transformOrigin = "center";
+        img.style.transform = `rotate(${image.rotate}deg) scale(${scale})`;
+      };
+
+      const applyRotations = () => {
+        document.querySelectorAll("[data-image]").forEach((img) => {
+          const card = img.closest("[data-product-id]");
+          if (!card) return;
+          const productId = card.getAttribute("data-product-id");
+          const product = products.find((item) => item.id === productId);
+          if (!product || !product.images || !product.images.length) return;
+          const index = imageState[productId] ?? 0;
+          const image = product.images[index];
+          applyImageTransform(img, image);
+        });
+      };
+
+      const renderImageArea = (product) => {
+        const images = product.images || [];
+        if (!images.length) {
+          return `
+            <div class="flex h-40 items-center justify-center gap-2 border border-dashed border-line bg-ink text-xs uppercase tracking-[0.3em] text-steel">
+              ${icons.camera}
+              <span>Photo Placeholder</span>
+            </div>
+          `;
+        }
+
+        const index = imageState[product.id] ?? 0;
+        const image = images[index];
+        const fitClass = getImageFitClass(image);
+        const sizeClass = getImageSizingClass(image);
+        const hoverClass = image.rotate ? "" : "group-hover:scale-[1.03]";
+        const total = images.length;
+        const navControls =
+          total > 1
+            ? `
+              <div class="absolute inset-0 flex items-center justify-between px-3">
+                <button
+                  class="image-nav grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/40 text-white transition hover:bg-black/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/60"
+                  data-image-nav="prev"
+                  data-dir="-1"
+                  aria-label="Previous image"
+                >
+                  ${icons.arrowLeft}
+                </button>
+                <button
+                  class="image-nav grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/40 text-white transition hover:bg-black/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/60"
+                  data-image-nav="next"
+                  data-dir="1"
+                  aria-label="Next image"
+                >
+                  ${icons.arrowRight}
+                </button>
+              </div>
+              <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2">
+                ${images
+                  .map(
+                    (_, dotIndex) =>
+                      `<button class="h-1.5 w-6 rounded-full ${
+                        dotIndex === index ? "bg-white/80" : "bg-white/30"
+                      } transition hover:bg-white/70" data-image-dot="true" data-index="${dotIndex}" aria-label="Go to image ${
+                        dotIndex + 1
+                      }"></button>`
+                  )
+                  .join("")}
+              </div>
+              <div class="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/50 px-2 py-1 text-[10px] uppercase tracking-widest text-white/70" data-image-count>
+                ${index + 1} / ${total}
+              </div>
+            `
+            : "";
+
+        return `
+          <div class="group relative flex h-56 items-center justify-center overflow-hidden border border-line bg-ink">
+            <img
+              data-image="true"
+              src="${escapeHTML(image.src)}"
+              alt="${escapeHTML(image.alt)}"
+              class="${sizeClass} ${fitClass} transition duration-500 ${hoverClass}"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
+            ${navControls}
+          </div>
+        `;
+      };
+
+      const updateImage = (card, product, index) => {
+        const images = product.images || [];
+        if (!images.length) return;
+        const image = images[index];
+        const img = card.querySelector("[data-image]");
+        if (!img) return;
+        img.src = image.src;
+        img.alt = image.alt;
+        img.classList.remove(
+          "object-cover",
+          "object-contain",
+          "group-hover:scale-[1.03]",
+          "h-full",
+          "w-full",
+          "max-h-full",
+          "max-w-full"
+        );
+        img.classList.add(...getImageFitClass(image).split(" "));
+        img.classList.add(...getImageSizingClass(image).split(" "));
+        if (!image.rotate) {
+          img.classList.add("group-hover:scale-[1.03]");
+        }
+        applyImageTransform(img, image);
+        const count = card.querySelector("[data-image-count]");
+        if (count) {
+          count.textContent = `${index + 1} / ${images.length}`;
+        }
+        card.querySelectorAll("[data-image-dot]").forEach((dot, dotIndex) => {
+          dot.classList.toggle("bg-white/80", dotIndex === index);
+          dot.classList.toggle("bg-white/30", dotIndex !== index);
+          dot.setAttribute("aria-current", dotIndex === index ? "true" : "false");
+        });
+      };
+
+      const renderProducts = (items) => {
+        if (!items.length) {
+          productGrid.innerHTML =
+            '<div class="col-span-full rounded-none border border-line bg-slate p-8 text-center text-sm text-steel">No products match your filters.</div>';
+          resultsMeta.textContent = "0 products found";
+          requestAnimationFrame(applyRotations);
+          return;
+        }
+
+        resultsMeta.textContent = `${items.length} products`;
+
+        productGrid.innerHTML = items
+          .map((product, index) => {
+            const delay = Math.min(index * 70, 420);
+            const version = product.version
+              ? `<span class="text-steel"> ${escapeHTML(product.version)}</span>`
+              : "";
+            const techPacks =
+              product.techPacks.length > 0
+                ? `<ul class="mt-3 space-y-2">
+                    ${product.techPacks
+                      .map(
+                        (pack) =>
+                          `<li><a class="text-sm text-fg underline decoration-line underline-offset-4 hover:text-accent" href="${escapeHTML(
+                            pack.url
+                          )}">${escapeHTML(pack.label)}</a></li>`
+                      )
+                      .join("")}
+                  </ul>`
+                : '<p class="mt-3 text-sm text-steel">No tech packs logged yet.</p>';
+            const issues =
+              product.issues.length > 0
+                ? `<div class="mt-3 space-y-3">
+                    ${product.issues
+                      .map(
+                        (item) =>
+                          `<div class="rounded-none border border-line bg-ink p-3">
+                            <p class="text-xs uppercase tracking-widest text-steel">Issue</p>
+                            <p class="mt-1 text-sm">${escapeHTML(item.issue)}</p>
+                            <p class="mt-3 text-xs uppercase tracking-widest text-steel">Resolution</p>
+                            <p class="mt-1 text-sm text-accent">${escapeHTML(item.resolution)}</p>
+                          </div>`
+                      )
+                      .join("")}
+                  </div>`
+                : '<p class="mt-3 text-sm text-steel">No issues logged.</p>';
+            const notes =
+              product.notes.length > 0
+                ? `<ul class="mt-3 space-y-2 text-sm text-steel">
+                    ${product.notes.map((note) => `<li>${escapeHTML(note)}</li>`).join("")}
+                  </ul>`
+                : '<p class="mt-3 text-sm text-steel">No notes yet.</p>';
+            return `
+            <article class="card-plate reveal flex h-full flex-col gap-6 rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-accent/60" style="animation-delay:${delay}ms" data-product-id="${escapeHTML(
+              product.id
+            )}">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h2 class="text-xl font-semibold font-display">${escapeHTML(product.name)}${version}</h2>
+                  <p class="mt-2 text-sm text-steel">${escapeHTML(product.description)}</p>
+                </div>
+                <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1 text-xs uppercase tracking-widest ${
+                  statusStyles[product.status]
+                }">${escapeHTML(statusLabels[product.status])}</span>
+              </div>
+
+              ${renderImageArea(product)}
+
+              <div class="space-y-4 text-sm">
+                <details class="group border-t border-line/80 pt-4">
+                  <summary class="flex cursor-pointer list-none items-center justify-between text-xs uppercase tracking-widest text-steel transition hover:text-accent">
+                    <span class="inline-flex items-center gap-2">
+                      ${icons.tech}
+                      <span>Tech Packs</span>
+                    </span>
+                    <span class="text-steel transition group-open:rotate-45">+</span>
+                  </summary>
+                  ${techPacks}
+                </details>
+
+                <details class="group border-t border-line/80 pt-4">
+                  <summary class="flex cursor-pointer list-none items-center justify-between text-xs uppercase tracking-widest text-steel transition hover:text-accent">
+                    <span class="inline-flex items-center gap-2">
+                      ${icons.issues}
+                      <span>Issues &amp; Resolutions</span>
+                    </span>
+                    <span class="text-steel transition group-open:rotate-45">+</span>
+                  </summary>
+                  ${issues}
+                </details>
+
+                <details class="group border-t border-line/80 pt-4">
+                  <summary class="flex cursor-pointer list-none items-center justify-between text-xs uppercase tracking-widest text-steel transition hover:text-accent">
+                    <span class="inline-flex items-center gap-2">
+                      ${icons.notes}
+                      <span>General Notes / Next Steps</span>
+                    </span>
+                    <span class="text-steel transition group-open:rotate-45">+</span>
+                  </summary>
+                  ${notes}
+                </details>
+              </div>
+            </article>
+          `;
+          })
+          .join("");
+        requestAnimationFrame(applyRotations);
+      };
+
+      const renderHistorical = () => {
+        if (!historical.length) {
+          historicalList.innerHTML =
+            '<div class="rounded-none border border-line/80 bg-slate/80 p-6 text-sm text-steel">No historical notes available.</div>';
+          return;
+        }
+
+        historicalList.innerHTML = historical
+          .map((entry, index) => {
+            const delay = Math.min(index * 80, 320);
+            return `
+            <article class="card-plate reveal rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm" style="animation-delay:${delay}ms">
+              <div class="border-l-2 border-accent/60 pl-5">
+                <h3 class="text-lg font-semibold">${escapeHTML(entry.title)}</h3>
+                <p class="mt-1 text-xs uppercase tracking-widest text-steel">Last Updated ${escapeHTML(
+                  entry.updated
+                )}</p>
+                <ul class="mt-4 space-y-2 text-sm text-steel">
+                  ${entry.summary
+                    .map((item) => `<li>${escapeHTML(item)}</li>`)
+                    .join("")}
+                </ul>
+              </div>
+            </article>
+          `;
+          })
+          .join("");
+      };
+
+      const applyFilters = () => {
+        const query = sanitize(searchInput.value);
+        const status = statusFilter.value;
+
+        const filtered = products.filter((product) => {
+          const matchesStatus = status === "all" || product.status === status;
+          const searchable = `${product.name} ${product.version} ${product.description}`;
+          const matchesQuery = sanitize(searchable).includes(query);
+          return matchesStatus && matchesQuery;
+        });
+
+        renderProducts(filtered);
+      };
+
+      productGrid.addEventListener("click", (event) => {
+        const navButton = event.target.closest("[data-image-nav]");
+        const dotButton = event.target.closest("[data-image-dot]");
+        if (!navButton && !dotButton) return;
+        const card = event.target.closest("[data-product-id]");
+        if (!card) return;
+        const productId = card.getAttribute("data-product-id");
+        const product = products.find((item) => item.id === productId);
+        if (!product || !product.images || !product.images.length) return;
+        const total = product.images.length;
+        let nextIndex = imageState[productId] ?? 0;
+        if (navButton) {
+          const dir = Number(navButton.getAttribute("data-dir"));
+          nextIndex = (nextIndex + dir + total) % total;
+        } else if (dotButton) {
+          nextIndex = Number(dotButton.getAttribute("data-index"));
+        }
+        imageState[productId] = nextIndex;
+        updateImage(card, product, nextIndex);
+      });
+
+      searchInput.addEventListener("input", applyFilters);
+      statusFilter.addEventListener("change", applyFilters);
+
+      renderProducts(products);
+      renderHistorical();
+
+      window.addEventListener("resize", applyRotations);
+      requestAnimationFrame(applyRotations);
+
+      const setTheme = (mode) => {
+        document.documentElement.dataset.theme = mode;
+        if (!themeToggle) return;
+        const isLight = mode === "light";
+        themeToggle.setAttribute("aria-pressed", isLight ? "true" : "false");
+        themeToggle.setAttribute(
+          "aria-label",
+          isLight ? "Switch to dark mode" : "Switch to light mode"
+        );
+        themeToggle
+          .querySelector(".icon-sun")
+          ?.classList.toggle("opacity-0", !isLight);
+        themeToggle
+          .querySelector(".icon-moon")
+          ?.classList.toggle("opacity-0", isLight);
+      };
+
+      const storedTheme = localStorage.getItem("theme");
+      const prefersLight =
+        window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      setTheme(storedTheme || (prefersLight ? "light" : "dark"));
+
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const nextTheme =
+            document.documentElement.dataset.theme === "light" ? "dark" : "light";
+          localStorage.setItem("theme", nextTheme);
+          setTheme(nextTheme);
+        });
+      }
+    </script>
+  </body>
+</html>
