@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow" />
     <title>Hola</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -39,6 +41,7 @@
         },
       };
     </script>
+
     <style>
       :root {
         color-scheme: dark;
@@ -130,6 +133,7 @@
       }
     </style>
   </head>
+
   <body class="relative bg-ink text-fg antialiased font-body">
     <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div class="glow-orb absolute -top-40 right-[-5%] h-80 w-80 rounded-full bg-accent/10 blur-3xl"></div>
@@ -137,25 +141,28 @@
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.06),_transparent_60%)]"></div>
       <div class="absolute inset-0 bg-[linear-gradient(120deg,_rgba(255,255,255,0.02),_transparent_40%,_rgba(255,255,255,0.03))]"></div>
     </div>
+
     <main class="min-h-screen">
+      <!-- HEADER -->
       <header class="border-b border-line/80">
         <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-6 py-8">
           <div>
-            <div>
-              <p class="text-xs uppercase tracking-luxe text-steel">Private Product Roster</p>
-              <div class="mt-2">
-                <img
-                  src="Fotos/logoHeader.png"
-                  alt="1898"
-                  class="h-10 w-auto object-contain sm:h-12"
-                  loading="lazy"
-                />
-              </div>
+            <p class="text-xs uppercase tracking-luxe text-steel">Private Product Roster</p>
+
+            <div class="mt-2">
+              <img
+                src="Fotos/logoHeader.png"
+                alt="1898"
+                class="h-10 w-auto object-contain sm:h-12"
+                loading="lazy"
+              />
             </div>
+
             <p class="mt-3 max-w-md text-sm text-steel">
               Internal reference for product status, documentation, and field notes.
             </p>
           </div>
+
           <div class="flex flex-wrap items-center gap-3 text-xs text-steel">
             <span class="rounded-full border border-line/80 px-3 py-1">Internal Use Only</span>
             <span class="rounded-full border border-line/80 px-3 py-1">Updated Feb 09, 2026</span>
@@ -163,30 +170,31 @@
         </div>
       </header>
 
+      <!-- PAGE TOGGLES + FILTERS -->
       <section class="mx-auto max-w-6xl px-6 py-10">
-        <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <label class="text-xs uppercase tracking-widest text-steel" for="searchInput">Search</label>
-            <input
-              id="searchInput"
-              type="search"
-              placeholder="Search by product name or description"
-              class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg placeholder:text-steel transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
-            />
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <!-- Tabs -->
+          <div class="flex items-center gap-2">
+            <button
+              id="tabRoster"
+              type="button"
+              class="rounded-full border border-line/80 bg-slate/80 px-4 py-2 text-xs uppercase tracking-widest text-fg transition hover:border-accent/60"
+              aria-pressed="true"
+            >
+              Roster
+            </button>
+            <button
+              id="tabInsights"
+              type="button"
+              class="rounded-full border border-line/80 bg-slate/80 px-4 py-2 text-xs uppercase tracking-widest text-steel transition hover:border-accent/60 hover:text-fg"
+              aria-pressed="false"
+            >
+              Insights
+            </button>
           </div>
-          <div class="flex items-end gap-3">
-            <div class="flex-1">
-              <label class="text-xs uppercase tracking-widest text-steel" for="statusFilter">Status</label>
-              <select
-                id="statusFilter"
-                class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
-              >
-                <option value="all">All Status</option>
-                <option value="production">Production</option>
-                <option value="development">Development</option>
-                <option value="discontinued">Discontinued</option>
-              </select>
-            </div>
+
+          <!-- Theme toggle -->
+          <div class="flex items-center gap-2">
             <button
               id="themeToggle"
               type="button"
@@ -215,6 +223,7 @@
                   <path d="M4.93 19.07l1.41-1.41"></path>
                   <path d="M17.66 6.34l1.41-1.41"></path>
                 </svg>
+
                 <svg
                   class="icon-moon absolute inset-0 h-5 w-5 transition duration-300"
                   viewBox="0 0 24 24"
@@ -225,462 +234,175 @@
                   stroke-linejoin="round"
                   aria-hidden="true"
                 >
-                  <path
-                    d="M21 12.8A8.5 8.5 0 0 1 11.2 3a8.5 8.5 0 1 0 9.8 9.8z"
-                  ></path>
+                  <path d="M21 12.8A8.5 8.5 0 0 1 11.2 3a8.5 8.5 0 1 0 9.8 9.8z"></path>
                 </svg>
               </span>
             </button>
           </div>
         </div>
+
+        <!-- Filters only apply to roster -->
+        <div id="rosterFilters" class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel" for="searchInput">Search</label>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Search by product name or description"
+              class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg placeholder:text-steel transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+            />
+          </div>
+
+          <div class="flex items-end gap-3">
+            <div class="flex-1">
+              <label class="text-xs uppercase tracking-widest text-steel" for="statusFilter">Status</label>
+              <select
+                id="statusFilter"
+                class="mt-2 w-full rounded-none border border-line/80 bg-slate/80 px-4 py-3 text-sm text-fg transition focus:border-accent/70 focus:outline-none focus:ring-1 focus:ring-accent/40"
+              >
+                <option value="all">All Status</option>
+                <option value="production">Production</option>
+                <option value="development">Development</option>
+                <option value="discontinued">Discontinued</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section class="mx-auto max-w-6xl px-6 pb-12">
+      <!-- =========================
+           PAGE 1: ROSTER
+      ========================== -->
+      <section id="rosterPage" class="mx-auto max-w-6xl px-6 pb-12">
         <div id="resultsMeta" class="mb-6 text-xs uppercase tracking-widest text-steel"></div>
         <div id="productGrid" class="grid gap-6"></div>
-<<<<<<< HEAD
-=======
       </section>
 
-      <!-- 2026 Product Release Calendar Section -->
-      <section class="mx-auto max-w-6xl px-6 pb-20">
+      <!-- 2026 Product Release Calendar (STRUCTURE ONLY / EMPTY) -->
+      <section id="calendarSection" class="mx-auto max-w-6xl px-6 pb-20">
         <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p class="text-xs uppercase tracking-luxe text-steel">2026 Product Release Calendar</p>
             <h2 class="mt-2 text-2xl font-semibold font-display">Release Roadmap</h2>
             <p class="mt-3 max-w-lg text-sm text-steel">
-              Strategic timing for new products, variants, and special editions throughout the year. Transforms indefinite product plans into clear monthly milestones.
+              Placeholder structure only. We will fill releases later.
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-3 text-xs text-steel">
-            <span class="rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-emerald-200">36 Planned Releases</span>
-            <span class="rounded-full border border-amber-300/60 bg-amber-400/10 px-3 py-1 text-amber-200">4 Quarters</span>
+            <span class="rounded-full border border-line/80 bg-slate/80 px-3 py-1">Quarter framework</span>
+            <span class="rounded-full border border-line/80 bg-slate/80 px-3 py-1">No entries yet</span>
           </div>
         </div>
 
-        <!-- Quarter Overview -->
+        <!-- Quarter Overview (kept for structure) -->
         <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 0ms">
             <div class="border-l-2 border-emerald-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-emerald-200">Q1 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Jan - Mar</p>
-              <p class="mt-2 text-sm text-steel">Foundation & Education Focus</p>
-              <div class="mt-3 flex items-center gap-2">
-                <span class="text-2xl font-bold text-fg">9</span>
-                <span class="text-xs text-steel">releases</span>
-              </div>
+              <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
           <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 100ms">
             <div class="border-l-2 border-blue-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-blue-200">Q2 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Apr - Jun</p>
-              <p class="mt-2 text-sm text-steel">Premium & Lifestyle Expansion</p>
-              <div class="mt-3 flex items-center gap-2">
-                <span class="text-2xl font-bold text-fg">9</span>
-                <span class="text-xs text-steel">releases</span>
-              </div>
+              <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
           <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 200ms">
             <div class="border-l-2 border-purple-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-purple-200">Q3 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Jul - Sep</p>
-              <p class="mt-2 text-sm text-steel">Innovation & Back-to-School</p>
-              <div class="mt-3 flex items-center gap-2">
-                <span class="text-2xl font-bold text-fg">9</span>
-                <span class="text-xs text-steel">releases</span>
-              </div>
+              <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
           <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 300ms">
             <div class="border-l-2 border-orange-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-orange-200">Q4 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Oct - Dec</p>
-              <p class="mt-2 text-sm text-steel">Holiday & Gift Market</p>
-              <div class="mt-3 flex items-center gap-2">
-                <span class="text-2xl font-bold text-fg">9</span>
-                <span class="text-xs text-steel">releases</span>
-              </div>
+              <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
         </div>
 
-        <!-- Monthly Calendar Grid -->
+        <!-- Empty Month Grid placeholders -->
         <div class="space-y-6">
           <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-emerald-200">Q1 - Foundation Building</h3>
+            <h3 class="mb-4 text-lg font-semibold font-display text-emerald-200">Q1</h3>
             <div class="grid gap-4 lg:grid-cols-3">
-              <!-- January -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-emerald-400/60" style="animation-delay: 100ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">January</h4>
-                  <span class="rounded-full border border-emerald-400/60 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Heavy-Duty Welding Gloves v2.0</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Enhancement</p>
-                    <p class="mt-1 text-steel">Enhanced heat resistance, improved fit</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Professional Aprons - Color Variants</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • New Options</p>
-                    <p class="mt-1 text-steel">Black, Dark Brown, Charcoal options</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Student Starter Kits</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Education</p>
-                    <p class="mt-1 text-steel">Bundled gloves + apron + accessories</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">January</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- February -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-emerald-400/60" style="animation-delay: 200ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">February</h4>
-                  <span class="rounded-full border border-emerald-400/60 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Custom Embossed Gloves</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Personalization</p>
-                    <p class="mt-1 text-steel">Name/company embossing service</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Couples Workshop Set</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 2 • Limited Edition</p>
-                    <p class="mt-1 text-steel">Valentine's matching his/hers sets</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Compact Travel Cases</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Mobility</p>
-                    <p class="mt-1 text-steel">Portable gear storage solutions</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">February</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- March -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-emerald-400/60" style="animation-delay: 300ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">March</h4>
-                  <span class="rounded-full border border-emerald-400/60 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Lightweight Spring Gloves</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Seasonal</p>
-                    <p class="mt-1 text-steel">Breathable leather for warmer weather</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Women's Fit Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 2 • Demographic</p>
-                    <p class="mt-1 text-steel">Tailored sizing for female welders</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Youth Training Gear</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Next Gen</p>
-                    <p class="mt-1 text-steel">Smaller sizes for young apprentices</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">March</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
             </div>
           </div>
 
           <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-blue-200">Q2 - Premium & Lifestyle</h3>
+            <h3 class="mb-4 text-lg font-semibold font-display text-blue-200">Q2</h3>
             <div class="grid gap-4 lg:grid-cols-3">
-              <!-- April -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-blue-400/60" style="animation-delay: 400ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">April</h4>
-                  <span class="rounded-full border border-blue-400/60 bg-blue-500/10 px-2 py-1 text-xs text-blue-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Premium Artisan Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Flagship</p>
-                    <p class="mt-1 text-steel">Hand-finished, premium materials</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Multi-Tool Holsters</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 2 • Workflow</p>
-                    <p class="mt-1 text-steel">Organized tool storage solutions</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Instructor Edition Gear</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Professional</p>
-                    <p class="mt-1 text-steel">Enhanced durability for teaching</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">April</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- May -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-blue-400/60" style="animation-delay: 500ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">May</h4>
-                  <span class="rounded-full border border-blue-400/60 bg-blue-500/10 px-2 py-1 text-xs text-blue-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Gardener-Welder Crossover</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Lifestyle</p>
-                    <p class="mt-1 text-steel">Dual-purpose gear for hobbyists</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Memorial Day Special Edition</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Patriotic</p>
-                    <p class="mt-1 text-steel">American flag embossed series</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Summer Weight Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Heat Adapt</p>
-                    <p class="mt-1 text-steel">Ventilated designs for hot weather</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">May</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- June -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-blue-400/60" style="animation-delay: 600ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">June</h4>
-                  <span class="rounded-full border border-blue-400/60 bg-blue-500/10 px-2 py-1 text-xs text-blue-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Father's Day Gift Sets</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Family</p>
-                    <p class="mt-1 text-steel">Curated bundles for gift-giving</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Automotive Restoration Line</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 2 • Niche</p>
-                    <p class="mt-1 text-steel">Specialized gear for car enthusiasts</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Camping-Workshop Fusion</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Outdoor</p>
-                    <p class="mt-1 text-steel">Portable gear for outdoor projects</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">June</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
             </div>
           </div>
 
           <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-purple-200">Q3 - Innovation & Education</h3>
+            <h3 class="mb-4 text-lg font-semibold font-display text-purple-200">Q3</h3>
             <div class="grid gap-4 lg:grid-cols-3">
-              <!-- July -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-purple-400/60" style="animation-delay: 700ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">July</h4>
-                  <span class="rounded-full border border-purple-400/60 bg-purple-500/10 px-2 py-1 text-xs text-purple-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Smart Gloves Beta</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Innovation</p>
-                    <p class="mt-1 text-steel">Temperature sensing and feedback</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Independence Day Heritage Line</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Americana</p>
-                    <p class="mt-1 text-steel">Vintage-inspired modern performance</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Youth Summer Camp Edition</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Education</p>
-                    <p class="mt-1 text-steel">Bright colors and safety features</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">July</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- August -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-purple-400/60" style="animation-delay: 800ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">August</h4>
-                  <span class="rounded-full border border-purple-400/60 bg-purple-500/10 px-2 py-1 text-xs text-purple-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Student Budget Line</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Access</p>
-                    <p class="mt-1 text-steel">Quality gear at student prices</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">School Colors Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 2 • Institutional</p>
-                    <p class="mt-1 text-steel">Custom colors for partnerships</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Back-to-Shop Bundles</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Transition</p>
-                    <p class="mt-1 text-steel">Complete packages for new term</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">August</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- September -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-purple-400/60" style="animation-delay: 900ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">September</h4>
-                  <span class="rounded-full border border-purple-400/60 bg-purple-500/10 px-2 py-1 text-xs text-purple-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Professional Certification Series</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Career</p>
-                    <p class="mt-1 text-steel">Gear for certification testing</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Harvest Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Seasonal</p>
-                    <p class="mt-1 text-steel">Earth tones and autumn designs</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Cold Weather Prep Line</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Winter Prep</p>
-                    <p class="mt-1 text-steel">Insulated gear for cold climates</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">September</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
             </div>
           </div>
 
           <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-orange-200">Q4 - Holiday & Gift Market</h3>
+            <h3 class="mb-4 text-lg font-semibold font-display text-orange-200">Q4</h3>
             <div class="grid gap-4 lg:grid-cols-3">
-              <!-- October -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-orange-400/60" style="animation-delay: 1000ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">October</h4>
-                  <span class="rounded-full border border-orange-400/60 bg-orange-500/10 px-2 py-1 text-xs text-orange-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Glow-in-Dark Safety Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Innovation</p>
-                    <p class="mt-1 text-steel">Enhanced visibility for night work</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Halloween Limited Edition</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Seasonal</p>
-                    <p class="mt-1 text-steel">Skeleton hands themed designs</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Winter Workshop Prep</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Seasonal</p>
-                    <p class="mt-1 text-steel">Gear for heated workshops</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">October</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- November -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-orange-400/60" style="animation-delay: 1100ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">November</h4>
-                  <span class="rounded-full border border-orange-400/60 bg-orange-500/10 px-2 py-1 text-xs text-orange-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Thanksgiving Gratitude Series</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Appreciation</p>
-                    <p class="mt-1 text-steel">"Thankful Tradesman" collection</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Holiday Gift Bundles</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Black Friday</p>
-                    <p class="mt-1 text-steel">Curated sets for gifting</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Cyber Monday Digital Exclusives</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 4 • Online</p>
-                    <p class="mt-1 text-steel">Limited digital-only releases</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">November</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
-
-              <!-- December -->
-              <article class="month-card reveal card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm transition duration-300 hover:border-orange-400/60" style="animation-delay: 1200ms">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-lg font-semibold">December</h4>
-                  <span class="rounded-full border border-orange-400/60 bg-orange-500/10 px-2 py-1 text-xs text-orange-200">3 releases</span>
-                </div>
-                <div class="space-y-3 text-sm">
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Christmas Workshop Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 1 • Holiday</p>
-                    <p class="mt-1 text-steel">Festive designs for holiday making</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">Last-Minute Gift Express</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 2 • Convenience</p>
-                    <p class="mt-1 text-steel">Quick-ship sets and vouchers</p>
-                  </div>
-                  <div class="rounded border border-line bg-ink p-3">
-                    <p class="font-medium">New Year Prep Collection</p>
-                    <p class="text-xs uppercase tracking-wider text-steel">Week 3 • Resolution</p>
-                    <p class="mt-1 text-steel">"New Year, New Skills" line</p>
-                  </div>
-                </div>
+              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
+                <h4 class="text-lg font-semibold">December</h4>
+                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
               </article>
             </div>
           </div>
         </div>
-
-        <!-- Strategic Notes -->
-        <div class="mt-12 space-y-6">
-          <div class="reveal grid gap-6 lg:grid-cols-2" style="animation-delay: 1300ms">
-            <div class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
-              <h3 class="mb-4 text-lg font-semibold font-display">Manufacturing Timeline</h3>
-              <div class="space-y-3 text-sm text-steel">
-                <div class="flex justify-between">
-                  <span>New Products Lead Time:</span>
-                  <span class="text-fg">6-8 weeks</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Variants/Colors Lead Time:</span>
-                  <span class="text-fg">3-4 weeks</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Quality Control Buffer:</span>
-                  <span class="text-fg">2 weeks</span>
-                </div>
-                <div class="mt-4 border-t border-line pt-3">
-                  <div class="flex justify-between font-medium">
-                    <span>Total Planning Horizon:</span>
-                    <span class="text-accent">10-12 weeks</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
-              <h3 class="mb-4 text-lg font-semibold font-display">Key Industry Alignments</h3>
-              <div class="space-y-3 text-sm">
-                <div class="flex items-center gap-3">
-                  <div class="h-2 w-2 rounded-full bg-emerald-400"></div>
-                  <span class="text-steel">FABTECH (November) - Major trade show prep in April</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="h-2 w-2 rounded-full bg-blue-400"></div>
-                  <span class="text-steel">Back-to-School (August) - Student market focus</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="h-2 w-2 rounded-full bg-purple-400"></div>
-                  <span class="text-steel">Holiday Shopping (Nov-Dec) - Gift market optimization</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div class="h-2 w-2 rounded-full bg-orange-400"></div>
-                  <span class="text-steel">New Year Resolutions (Jan) - Skills development timing</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
->>>>>>> 1324485b7eae2917e6d1a1f84366a21ad07b5d64
       </section>
 
+      <!-- Historical Notes -->
       <section class="mx-auto max-w-6xl px-6 pb-20">
         <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -691,9 +413,137 @@
         </div>
         <div id="historicalList" class="space-y-6"></div>
       </section>
+
+      <!-- =========================
+           PAGE 2: INSIGHTS
+      ========================== -->
+      <section id="insightsPage" class="mx-auto hidden max-w-6xl px-6 pb-20">
+        <div class="mb-8">
+          <p class="text-xs uppercase tracking-luxe text-steel">Competitor Reviews</p>
+          <h2 class="mt-2 text-2xl font-semibold font-display">Insights & Field Notes</h2>
+          <p class="mt-3 max-w-2xl text-sm text-steel">
+            Structure only. We’ll keep adding competitor products, notes, pros/cons, and design ideas here.
+          </p>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <!-- Mechanix Regulator -->
+          <article class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-xl font-semibold font-display">Mechanix Wear – Welding Series (Regulator)</h3>
+                <p class="mt-2 text-sm text-steel">Quick evaluation + design callouts.</p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200">
+                Reviewed
+              </span>
+            </div>
+
+            <!-- Image placeholder (replace src with your Shopify file path/url) -->
+            <div class="mt-5 overflow-hidden border border-line bg-ink">
+              <img
+                src="Fotos/Mechanix Black.png"
+                alt="Mechanix Regulator glove"
+                class="h-64 w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="mt-5 space-y-3 text-sm text-steel">
+              <p class="text-xs uppercase tracking-widest text-steel">Notes</p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>FR cotton lining + braided thermal protection, but cotton lining felt less comfortable than ours.</li>
+                <li>“High roller fingertip design” stood out — feature present on both gloves, we don’t have it yet.</li>
+                <li>Gun cut between fingers (noted around the two-finger web area).</li>
+                <li>Boar leather mentioned — compare against nubuck (note: nubuck generally considered “best”).</li>
+                <li>Overall: “nice glove”, advertising is strong.</li>
+              </ul>
+
+              <div class="mt-4 border-t border-line/80 pt-4">
+                <p class="text-xs uppercase tracking-widest text-steel">Potential Actions</p>
+                <ul class="list-disc pl-5 space-y-2">
+                  <li>Prototype “fingertip design” concept (callout to Paul).</li>
+                  <li>Evaluate boar leather vs nubuck in heat + wear testing.</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Mechanix Flux -->
+          <article class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-xl font-semibold font-display">Mechanix Wear – Welding Series (Flux)</h3>
+                <p class="mt-2 text-sm text-steel">Arc/MIG variant evaluation + feature questions.</p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200">
+                Reviewed
+              </span>
+            </div>
+
+            <!-- Image placeholder (replace src with your Shopify file path/url) -->
+            <div class="mt-5 overflow-hidden border border-line bg-ink">
+              <img
+                src="Fotos/Mechanix Cow.png"
+                alt="Mechanix Flux glove"
+                class="h-64 w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="mt-5 space-y-3 text-sm text-steel">
+              <p class="text-xs uppercase tracking-widest text-steel">Notes</p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>Less comfortable than the Regulator (first impression).</li>
+                <li>Has side “slide protection” feature — question: do we actually need this?</li>
+                <li>Material noted as cow (cow leather).</li>
+                <li>Biggest recurring takeaway across both: fingertip design.</li>
+                <li>Claim: we have the same or better cut ratings on most of these; they market it well.</li>
+              </ul>
+
+              <div class="mt-4 border-t border-line/80 pt-4">
+                <p class="text-xs uppercase tracking-widest text-steel">Questions to Resolve</p>
+                <ul class="list-disc pl-5 space-y-2">
+                  <li>How required is side slide protection for our core users?</li>
+                  <li>Do we add it as a variant feature or keep the glove simpler?</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Placeholder section for future opinions -->
+        <div class="mt-10">
+          <div class="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-luxe text-steel">Future</p>
+              <h3 class="mt-2 text-xl font-semibold font-display">Opinions & Ideas (Placeholder)</h3>
+              <p class="mt-2 text-sm text-steel">We’ll add brand-by-brand notes, quotes, and design direction.</p>
+            </div>
+            <span class="text-xs uppercase tracking-widest text-steel">Structure only</span>
+          </div>
+
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+              <p class="text-xs uppercase tracking-widest text-steel">Section</p>
+              <h4 class="mt-2 text-lg font-semibold">Competitor Summary</h4>
+              <p class="mt-2 text-sm text-steel">Add pros/cons, price, materials, sizing, durability notes.</p>
+            </div>
+
+            <div class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+              <p class="text-xs uppercase tracking-widest text-steel">Section</p>
+              <h4 class="mt-2 text-lg font-semibold">Design Ideas</h4>
+              <p class="mt-2 text-sm text-steel">Add feature wishlist + next experiments + decisions.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <script>
+      // =========================
+      // DATA
+      // =========================
       const products = [
         {
           id: "stanton-glove-v1",
@@ -764,20 +614,17 @@
             {
               issue:
                 "No clear way to attach the glove to the apron (missing hook/loop system between glove and apron).",
-              resolution:
-                "",
+              resolution: "",
             },
             {
               issue:
                 "Trigger snap / snap hook hardware feels weaker than competitor versions (inferior robustness).",
-              resolution:
-                "",
+              resolution: "",
             },
             {
               issue:
                 "Snap hook finish does not match the desired roughed-out look (competitors buy shiny hardware and condition/tumble it to dull the finish).",
-              resolution:
-                "",
+              resolution: "",
             },
           ],
           notes: [
@@ -785,6 +632,7 @@
             "Keep collecting fit feedback (especially as V2 is finalized).",
           ],
         },
+
         {
           id: "stanton-glove-v2",
           name: "Stanton Glove",
@@ -814,6 +662,7 @@
             "Update Shopify naming: Stanton V1 vs Stanton V2.",
           ],
         },
+
         {
           id: "oxyacetylene-glove",
           name: "Oxyacetylene Glove",
@@ -836,6 +685,7 @@
             "One name only (avoid multiple names).",
           ],
         },
+
         {
           id: "tig-unlined-glove",
           name: "TIG Unlined Glove",
@@ -868,6 +718,7 @@
             "Expect 1-2 revision rounds for fit tuning before approval.",
           ],
         },
+
         {
           id: "miner-glove",
           name: "Miner Glove",
@@ -884,11 +735,9 @@
           ],
           techPacks: [],
           issues: [],
-          notes: [
-            "Collect more field feedback.",
-            "Decide whether to proceed to prototype tech pack or keep parked.",
-          ],
+          notes: ["Collect more field feedback.", "Decide whether to proceed to prototype tech pack or keep parked."],
         },
+
         {
           id: "iron-jim-v1",
           name: "Welding Apron",
@@ -923,59 +772,58 @@
             },
           ],
           issues: [
-            {
-              issue: "Shoulder straps come loose.",
-              resolution: "Added back connector strap.",
-            },
-            {
-              issue: "Uneven weight distribution.",
-              resolution: "X-back system.",
-            },
-            {
-              issue: "Fit inconsistency.",
-              resolution: "Standardized sizing using Medium reference.",
-            },
-            {
-              issue: "Bulky seams.",
-              resolution: "Shaved edges / reduced bulk.",
-            },
-            {
-              issue: "Hardware durability.",
-              resolution: "Standardized hardware + eyelet spacing 2cm.",
-            },
-            {
-              issue: "Pocket usability.",
-              resolution: "Corrected sizing/placement.",
-            },
-            {
-              issue: "Strap adjustment slips.",
-              resolution: "Strap keepers/belt loops.",
-            },
+            { issue: "Shoulder straps come loose.", resolution: "Added back connector strap." },
+            { issue: "Uneven weight distribution.", resolution: "X-back system." },
+            { issue: "Fit inconsistency.", resolution: "Standardized sizing using Medium reference." },
+            { issue: "Bulky seams.", resolution: "Shaved edges / reduced bulk." },
+            { issue: "Hardware durability.", resolution: "Standardized hardware + eyelet spacing 2cm." },
+            { issue: "Pocket usability.", resolution: "Corrected sizing/placement." },
+            { issue: "Strap adjustment slips.", resolution: "Strap keepers/belt loops." },
             {
               issue: "Full-grain leather tested but underperformed.",
               resolution: "Abandoned; returned to suede.",
             },
             {
-              issue:
-                "Need shorter straps for compact sizes (current strap length not ideal).",
-              resolution:
-                "",
+              issue: "Need shorter straps for compact sizes (current strap length not ideal).",
+              resolution: "",
             },
             {
-              issue:
-                "No clear way to attach gloves to the apron (D-ring exists but there is no functional glove connection).",
-              resolution:
-                "",
+              issue: "No clear way to attach gloves to the apron (D-ring exists but there is no functional glove connection).",
+              resolution: "",
             },
             {
               issue:
                 "Rear strap system does not allow the welder to easily put on/remove the apron while wearing a helmet (competitor uses wider straps that enable this).",
-              resolution:
-                "",
+              resolution: "",
+            },
+
+            // ✅ ADDED (from your new notes) — appended, not replacing anything:
+            {
+              issue: "Top fastening system needs improvement (strong + reliable, better look).",
+              resolution: "Explore competitor-style fastening; design a cleaner, stronger solution that reduces snag risk.",
+            },
+            {
+              issue: "Stitching reinforcement at stress points may be insufficient for next version.",
+              resolution: "Confirm double-stitching with Kevlar thread; verify thread sizing/content; add bartack finishing at ALL stress points.",
+            },
+            {
+              issue: "Pockets above kangaroo pouch can become shrapnel/debris collectors for welding variant.",
+              resolution: "Option A: remove upper pockets and keep kangaroo pouch only. Option B: add a simple flap (1.5–2in) to prevent debris without buckles/snaps.",
+            },
+            {
+              issue: "X-strap vs alternative strap systems (usability with helmet on/off).",
+              resolution: "Evaluate Y-strap concept that allows don/doff while helmet stays on; keep X-strap option for users who prefer it.",
             },
           ],
-          notes: [],
+          notes: [
+            // ✅ Added next steps (appended)
+            "Collect field testing notes from Alisyn’s open house tester once shop time resumes.",
+            "Prototype/compare: X-strap vs Y-strap comfort + don/doff with helmet.",
+            "Decide pocket approach for welding variant: remove upper pockets vs add flap (1.5–2in).",
+            "Confirm double stitch standard + bartack map for all stress points (document in tech pack).",
+          ],
         },
+
         {
           id: "firefighter-gloves",
           name: "Firefighter Gloves",
@@ -994,6 +842,7 @@
             "Timeline: Q3 2025 target for first samples.",
           ],
         },
+
         {
           id: "welding-sleeves",
           name: "Welding Sleeves",
@@ -1008,7 +857,7 @@
             "Design with adjustable straps for secure fit.",
             "Consider spatter-resistant materials vs traditional leather.",
             "Research competitor pricing (Tillman, Steiner, Lincoln).",
-            "Determine length options (18\" vs 24\").",
+            'Determine length options (18" vs 24").',
             "Timeline: Q2 2025 target for prototype.",
           ],
         },
@@ -1040,6 +889,9 @@
         discontinued: "border-stone-500/60 text-stone-300 bg-stone-500/10",
       };
 
+      // =========================
+      // DOM
+      // =========================
       const productGrid = document.getElementById("productGrid");
       const resultsMeta = document.getElementById("resultsMeta");
       const historicalList = document.getElementById("historicalList");
@@ -1047,6 +899,16 @@
       const statusFilter = document.getElementById("statusFilter");
       const themeToggle = document.getElementById("themeToggle");
 
+      const tabRoster = document.getElementById("tabRoster");
+      const tabInsights = document.getElementById("tabInsights");
+      const rosterPage = document.getElementById("rosterPage");
+      const insightsPage = document.getElementById("insightsPage");
+      const rosterFilters = document.getElementById("rosterFilters");
+      const calendarSection = document.getElementById("calendarSection");
+
+      // =========================
+      // HELPERS
+      // =========================
       const sanitize = (value) => value.toLowerCase().trim();
       const escapeHTML = (value) =>
         String(value)
@@ -1145,6 +1007,7 @@
         const sizeClass = getImageSizingClass(image);
         const hoverClass = image.rotate ? "" : "group-hover:scale-[1.03]";
         const total = images.length;
+
         const navControls =
           total > 1
             ? `
@@ -1205,8 +1068,10 @@
         const image = images[index];
         const img = card.querySelector("[data-image]");
         if (!img) return;
+
         img.src = image.src;
         img.alt = image.alt;
+
         img.classList.remove(
           "object-cover",
           "object-contain",
@@ -1216,16 +1081,16 @@
           "max-h-full",
           "max-w-full"
         );
+
         img.classList.add(...getImageFitClass(image).split(" "));
         img.classList.add(...getImageSizingClass(image).split(" "));
-        if (!image.rotate) {
-          img.classList.add("group-hover:scale-[1.03]");
-        }
+        if (!image.rotate) img.classList.add("group-hover:scale-[1.03]");
+
         applyImageTransform(img, image);
+
         const count = card.querySelector("[data-image-count]");
-        if (count) {
-          count.textContent = `${index + 1} / ${images.length}`;
-        }
+        if (count) count.textContent = `${index + 1} / ${images.length}`;
+
         card.querySelectorAll("[data-image-dot]").forEach((dot, dotIndex) => {
           dot.classList.toggle("bg-white/80", dotIndex === index);
           dot.classList.toggle("bg-white/30", dotIndex !== index);
@@ -1250,6 +1115,7 @@
             const version = product.version
               ? `<span class="text-steel"> ${escapeHTML(product.version)}</span>`
               : "";
+
             const techPacks =
               product.techPacks.length > 0
                 ? `<ul class="mt-3 space-y-2">
@@ -1263,6 +1129,7 @@
                       .join("")}
                   </ul>`
                 : '<p class="mt-3 text-sm text-steel">No tech packs logged yet.</p>';
+
             const issues =
               product.issues.length > 0
                 ? `<div class="mt-3 space-y-3">
@@ -1279,12 +1146,14 @@
                       .join("")}
                   </div>`
                 : '<p class="mt-3 text-sm text-steel">No issues logged.</p>';
+
             const notes =
               product.notes.length > 0
                 ? `<ul class="mt-3 space-y-2 text-sm text-steel">
                     ${product.notes.map((note) => `<li>${escapeHTML(note)}</li>`).join("")}
                   </ul>`
                 : '<p class="mt-3 text-sm text-steel">No notes yet.</p>';
+
             return `
             <article class="card-plate reveal flex h-full flex-col gap-6 rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-accent/60" style="animation-delay:${delay}ms" data-product-id="${escapeHTML(
               product.id
@@ -1339,6 +1208,7 @@
           `;
           })
           .join("");
+
         requestAnimationFrame(applyRotations);
       };
 
@@ -1385,36 +1255,85 @@
         renderProducts(filtered);
       };
 
+      // =========================
+      // IMAGE NAV
+      // =========================
       productGrid.addEventListener("click", (event) => {
         const navButton = event.target.closest("[data-image-nav]");
         const dotButton = event.target.closest("[data-image-dot]");
         if (!navButton && !dotButton) return;
+
         const card = event.target.closest("[data-product-id]");
         if (!card) return;
+
         const productId = card.getAttribute("data-product-id");
         const product = products.find((item) => item.id === productId);
         if (!product || !product.images || !product.images.length) return;
+
         const total = product.images.length;
         let nextIndex = imageState[productId] ?? 0;
+
         if (navButton) {
           const dir = Number(navButton.getAttribute("data-dir"));
           nextIndex = (nextIndex + dir + total) % total;
         } else if (dotButton) {
           nextIndex = Number(dotButton.getAttribute("data-index"));
         }
+
         imageState[productId] = nextIndex;
         updateImage(card, product, nextIndex);
       });
 
+      // =========================
+      // FILTER EVENTS
+      // =========================
       searchInput.addEventListener("input", applyFilters);
       statusFilter.addEventListener("change", applyFilters);
 
-      renderProducts(products);
-      renderHistorical();
+      // =========================
+      // TABS (Roster / Insights)
+      // =========================
+      const showRoster = () => {
+        rosterPage.classList.remove("hidden");
+        calendarSection.classList.remove("hidden");
+        insightsPage.classList.add("hidden");
 
-      window.addEventListener("resize", applyRotations);
-      requestAnimationFrame(applyRotations);
+        rosterFilters.classList.remove("hidden");
 
+        tabRoster.setAttribute("aria-pressed", "true");
+        tabInsights.setAttribute("aria-pressed", "false");
+
+        tabRoster.classList.add("text-fg");
+        tabRoster.classList.remove("text-steel");
+        tabInsights.classList.add("text-steel");
+        tabInsights.classList.remove("text-fg");
+
+        // Re-apply rotations after layout changes
+        requestAnimationFrame(applyRotations);
+      };
+
+      const showInsights = () => {
+        rosterPage.classList.add("hidden");
+        calendarSection.classList.add("hidden");
+        insightsPage.classList.remove("hidden");
+
+        rosterFilters.classList.add("hidden");
+
+        tabRoster.setAttribute("aria-pressed", "false");
+        tabInsights.setAttribute("aria-pressed", "true");
+
+        tabInsights.classList.add("text-fg");
+        tabInsights.classList.remove("text-steel");
+        tabRoster.classList.add("text-steel");
+        tabRoster.classList.remove("text-fg");
+      };
+
+      tabRoster.addEventListener("click", showRoster);
+      tabInsights.addEventListener("click", showInsights);
+
+      // =========================
+      // THEME
+      // =========================
       const setTheme = (mode) => {
         document.documentElement.dataset.theme = mode;
         if (!themeToggle) return;
@@ -1445,6 +1364,18 @@
           setTheme(nextTheme);
         });
       }
+
+      // =========================
+      // INITIAL RENDER
+      // =========================
+      renderProducts(products);
+      renderHistorical();
+
+      window.addEventListener("resize", applyRotations);
+      requestAnimationFrame(applyRotations);
+
+      // Default to roster
+      showRoster();
     </script>
   </body>
 </html>
