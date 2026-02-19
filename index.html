@@ -307,28 +307,40 @@
         </div>
 
         <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 0ms">
+          <div
+            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
+            style="animation-delay: 0ms"
+          >
             <div class="border-l-2 border-emerald-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-emerald-200">Q1 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Jan - Mar</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
-          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 100ms">
+          <div
+            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
+            style="animation-delay: 100ms"
+          >
             <div class="border-l-2 border-blue-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-blue-200">Q2 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Apr - Jun</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
-          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 200ms">
+          <div
+            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
+            style="animation-delay: 200ms"
+          >
             <div class="border-l-2 border-purple-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-purple-200">Q3 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Jul - Sep</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
-          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 300ms">
+          <div
+            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
+            style="animation-delay: 300ms"
+          >
             <div class="border-l-2 border-orange-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-orange-200">Q4 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Oct - Dec</p>
@@ -444,7 +456,9 @@
                 <h3 class="text-xl font-semibold font-display">Mechanix Wear – Welding Series (Regulator)</h3>
                 <p class="mt-2 text-sm text-steel">Quick evaluation + design callouts.</p>
               </div>
-              <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200">
+              <span
+                class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200"
+              >
                 Reviewed
               </span>
             </div>
@@ -485,7 +499,9 @@
                 <h3 class="text-xl font-semibold font-display">Mechanix Wear – Welding Series (Flux)</h3>
                 <p class="mt-2 text-sm text-steel">Arc/MIG variant evaluation + feature questions.</p>
               </div>
-              <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200">
+              <span
+                class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200"
+              >
                 Reviewed
               </span>
             </div>
@@ -699,7 +715,7 @@
             { src: "Fotos/ApronGold.jpg", alt: "Iron Jim V1 apron in gold" },
           ],
           techPacks: [
-            { label: "07/18/23 - Apron Tech Pack (Split Front X-Back); base design with X-back system.", url: "./TechPacks/1898_APRON_TECH_FINAL.pdf" },
+            { label: '07/18/23 - Apron Tech Pack (Split Front X-Back); base design with X-back system.', url: "./TechPacks/1898_APRON_TECH_FINAL.pdf" },
             { label: "01/17/24 - Final Samples Tech Pack; updated specifications for the production version.", url: "./TechPacks/1898_APRONS_FINAL_SAMPLES_0124.pdf" },
             { label: "02/24 - Revised Final Samples Tech Pack; post-review revision (revised date).", url: "./TechPacks/1898_APRONS_FINAL_SAMPLES_0224.pdf" },
             { label: "09/27/24 - Features Annotated; front/back feature annotations.", url: "./TechPacks/1898_APRON_ANNOTATED.pdf" },
@@ -777,6 +793,40 @@
           techPacks: [],
           issues: [],
           notes: [],
+        },
+
+        // ✅ NEW PRODUCT: Kids Gloves (Fortnite-style neon, NOT 1898-branded)
+        {
+          id: "kids-gloves",
+          name: "Kids Gloves",
+          version: "",
+          status: "development",
+          description:
+            "Kids-focused glove concept. Not launched as an 1898 glove. Bright neon colors (Fortnite-style) with a strict goal: be as cheap as possible while still safe/usable. Intended for kids/youth; optimized for affordability and fun colorways.",
+          images: [],
+          techPacks: [],
+          issues: [
+            {
+              issue: "Brand positioning risk (confusion with 1898 premium line).",
+              resolution: "Keep branding separate from 1898; distinct naming, packaging, and product page.",
+            },
+            {
+              issue: "Cost target vs durability/heat protection tradeoffs.",
+              resolution: "Define minimum acceptable protection/durability; choose materials/lining based on target cost.",
+            },
+            {
+              issue: "Sizing needs to be clear for kids/youth (avoid returns).",
+              resolution: "Create simplified youth sizing chart + recommended age/hand measurements.",
+            },
+          ],
+          notes: [
+            "Define colorways (examples): Neon Green, Neon Pink, Neon Blue, Neon Orange, Neon Purple; consider 2-tone options.",
+            "Define size run (youth): YS / YM / YL (or numeric hand circumference spec).",
+            "Decide material stack for lowest cost (leather vs synthetic vs hybrid); confirm minimum protection requirements.",
+            "Decide if cuff is short or mid (likely shorter for dexterity + cost).",
+            "Add packaging direction: non-1898 branding, kid-friendly, high-contrast colors.",
+            "Once Victor is added to chat: capture more constraints (target price, channel, launch timeline).",
+          ],
         },
       ];
 
