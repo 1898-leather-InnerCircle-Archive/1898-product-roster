@@ -127,7 +127,21 @@
           opacity: 1 !important;
         }
       }
+
+      /* Simple modal */
+      .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; z-index: 50; }
+      .modal-backdrop.open { display: grid; place-items: center; padding: 24px; }
+      .modal { max-width: 980px; width: 100%; max-height: 88vh; overflow: auto; }
+      .input { width:100%; border:1px solid rgb(var(--line)); background: rgb(var(--slate) / .8); padding: 10px 12px; }
+      .btn { border:1px solid rgb(var(--line)); background: rgb(var(--slate) / .8); padding: 10px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }
+      .btn:hover { border-color: rgb(var(--accent) / .6); color: rgb(var(--fg)); }
+      .btn-danger { border-color: rgba(255,120,120,.4); color: rgba(255,170,170,.95); }
+      .btn-danger:hover { border-color: rgba(255,120,120,.8); }
+      .muted { color: rgb(var(--steel)); }
     </style>
+
+    <!-- Supabase JS v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
 
   <body class="relative bg-ink text-fg antialiased font-body">
@@ -159,9 +173,15 @@
             </p>
           </div>
 
-          <div class="flex flex-wrap items-center gap-3 text-xs text-steel">
-            <span class="rounded-full border border-line/80 px-3 py-1">Internal Use Only</span>
-            <span class="rounded-full border border-line/80 px-3 py-1">Updated Feb 16, 2026</span>
+          <div class="flex flex-col items-end gap-3 text-xs text-steel">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="rounded-full border border-line/80 px-3 py-1">Internal Use Only</span>
+              <span id="updatedBadge" class="rounded-full border border-line/80 px-3 py-1">Updated —</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="createProductBtn" class="btn rounded-full">Create product</button>
+            </div>
           </div>
         </div>
       </header>
@@ -265,12 +285,7 @@
         </div>
       </section>
 
-      <!-- =========================
-           PAGE 1: ROSTER (STATIC)
-           - Buttons per product
-           - Clicking opens a full product view
-           - Product view expanded by default
-      ========================== -->
+      <!-- PAGE 1: ROSTER -->
       <section id="rosterPage" class="mx-auto max-w-6xl px-6 pb-10">
         <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div id="resultsMeta" class="text-xs uppercase tracking-widest text-steel"></div>
@@ -290,7 +305,7 @@
         <div id="productView"></div>
       </section>
 
-      <!-- 2026 Product Release Calendar (STRUCTURE ONLY / EMPTY) -->
+      <!-- 2026 Product Release Calendar (placeholder) -->
       <section id="calendarSection" class="mx-auto max-w-6xl px-6 pb-20">
         <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -307,118 +322,32 @@
         </div>
 
         <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div
-            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
-            style="animation-delay: 0ms"
-          >
+          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 0ms">
             <div class="border-l-2 border-emerald-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-emerald-200">Q1 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Jan - Mar</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
-          <div
-            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
-            style="animation-delay: 100ms"
-          >
+          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 100ms">
             <div class="border-l-2 border-blue-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-blue-200">Q2 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Apr - Jun</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
-          <div
-            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
-            style="animation-delay: 200ms"
-          >
+          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 200ms">
             <div class="border-l-2 border-purple-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-purple-200">Q3 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Jul - Sep</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
             </div>
           </div>
-          <div
-            class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm"
-            style="animation-delay: 300ms"
-          >
+          <div class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm" style="animation-delay: 300ms">
             <div class="border-l-2 border-orange-400/60 pl-4">
               <h3 class="text-lg font-semibold font-display text-orange-200">Q4 2026</h3>
               <p class="text-xs uppercase tracking-widest text-steel">Oct - Dec</p>
               <p class="mt-2 text-sm text-steel">Placeholder</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-6">
-          <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-emerald-200">Q1</h3>
-            <div class="grid gap-4 lg:grid-cols-3">
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">January</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">February</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">March</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-            </div>
-          </div>
-
-          <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-blue-200">Q2</h3>
-            <div class="grid gap-4 lg:grid-cols-3">
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">April</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">May</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">June</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-            </div>
-          </div>
-
-          <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-purple-200">Q3</h3>
-            <div class="grid gap-4 lg:grid-cols-3">
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">July</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">August</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">September</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-            </div>
-          </div>
-
-          <div class="calendar-quarter pl-4">
-            <h3 class="mb-4 text-lg font-semibold font-display text-orange-200">Q4</h3>
-            <div class="grid gap-4 lg:grid-cols-3">
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">October</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">November</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
-              <article class="month-card card-plate rounded-none border border-line/80 bg-slate/80 p-5 shadow-card backdrop-blur-sm">
-                <h4 class="text-lg font-semibold">December</h4>
-                <p class="mt-2 text-sm text-steel">No releases added yet.</p>
-              </article>
             </div>
           </div>
         </div>
@@ -431,430 +360,232 @@
             <p class="text-xs uppercase tracking-luxe text-steel">Historical Notes &amp; Decisions</p>
             <h2 class="mt-2 text-2xl font-semibold font-display">Historical Notes &amp; Decisions</h2>
           </div>
-          <span class="text-xs uppercase tracking-widest text-steel">Reference Only</span>
+          <div class="flex items-center gap-2">
+            <span class="text-xs uppercase tracking-widest text-steel">Reference Only</span>
+            <button id="addHistoricalBtn" class="btn rounded-full">Add note</button>
+          </div>
         </div>
         <div id="historicalList" class="space-y-6"></div>
       </section>
 
-      <!-- =========================
-           PAGE 2: INSIGHTS
-      ========================== -->
+      <!-- PAGE 2: INSIGHTS -->
       <section id="insightsPage" class="mx-auto hidden max-w-6xl px-6 pb-20">
         <div class="mb-8">
           <p class="text-xs uppercase tracking-luxe text-steel">Competitor Reviews</p>
-          <h2 class="mt-2 text-2xl font-semibold font-display">Insights & Field Notes</h2>
-          <p class="mt-3 max-w-2xl text-sm text-steel">
-            Structure only. We’ll keep adding competitor products, notes, pros/cons, and design ideas here.
-          </p>
-        </div>
-
-        <div class="grid gap-6 lg:grid-cols-2">
-          <!-- Mechanix Regulator -->
-          <article class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <h3 class="text-xl font-semibold font-display">Mechanix Wear – Welding Series (Regulator)</h3>
-                <p class="mt-2 text-sm text-steel">Quick evaluation + design callouts.</p>
-              </div>
-              <span
-                class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200"
-              >
-                Reviewed
-              </span>
-            </div>
-
-            <div class="mt-5 overflow-hidden border border-line bg-ink">
-              <img
-                src="Fotos/Mechanix Black.png"
-                alt="Mechanix Regulator glove"
-                class="h-64 w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-
-            <div class="mt-5 space-y-3 text-sm text-steel">
-              <p class="text-xs uppercase tracking-widest text-steel">Notes</p>
-              <ul class="list-disc pl-5 space-y-2">
-                <li>FR cotton lining + braided thermal protection, but cotton lining felt less comfortable than ours.</li>
-                <li>“High roller fingertip design” stood out — feature present on both gloves, we don’t have it yet.</li>
-                <li>Gun cut between fingers (noted around the two-finger web area).</li>
-                <li>Boar leather mentioned — compare against nubuck (note: nubuck generally considered “best”).</li>
-                <li>Overall: “nice glove”, advertising is strong.</li>
-              </ul>
-
-              <div class="mt-4 border-t border-line/80 pt-4">
-                <p class="text-xs uppercase tracking-widest text-steel">Potential Actions</p>
-                <ul class="list-disc pl-5 space-y-2">
-                  <li>Prototype “fingertip design” concept (callout to Paul).</li>
-                  <li>Evaluate boar leather vs nubuck in heat + wear testing.</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-
-          <!-- Mechanix Flux -->
-          <article class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <h3 class="text-xl font-semibold font-display">Mechanix Wear – Welding Series (Flux)</h3>
-                <p class="mt-2 text-sm text-steel">Arc/MIG variant evaluation + feature questions.</p>
-              </div>
-              <span
-                class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200"
-              >
-                Reviewed
-              </span>
-            </div>
-
-            <div class="mt-5 overflow-hidden border border-line bg-ink">
-              <img
-                src="Fotos/Mechanix Cow.png"
-                alt="Mechanix Flux glove"
-                class="h-64 w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-
-            <div class="mt-5 space-y-3 text-sm text-steel">
-              <p class="text-xs uppercase tracking-widest text-steel">Notes</p>
-              <ul class="list-disc pl-5 space-y-2">
-                <li>Less comfortable than the Regulator (first impression).</li>
-                <li>Has side “slide protection” feature — question: do we actually need this?</li>
-                <li>Material noted as cow (cow leather).</li>
-                <li>Biggest recurring takeaway across both: fingertip design.</li>
-                <li>Claim: we have the same or better cut ratings on most of these; they market it well.</li>
-              </ul>
-
-              <div class="mt-4 border-t border-line/80 pt-4">
-                <p class="text-xs uppercase tracking-widest text-steel">Questions to Resolve</p>
-                <ul class="list-disc pl-5 space-y-2">
-                  <li>How required is side slide protection for our core users?</li>
-                  <li>Do we add it as a variant feature or keep the glove simpler?</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="mt-10">
-          <div class="mb-4 flex items-end justify-between gap-4">
-            <div>
-              <p class="text-xs uppercase tracking-luxe text-steel">Future</p>
-              <h3 class="mt-2 text-xl font-semibold font-display">Opinions & Ideas (Placeholder)</h3>
-              <p class="mt-2 text-sm text-steel">We’ll add brand-by-brand notes, quotes, and design direction.</p>
-            </div>
-            <span class="text-xs uppercase tracking-widest text-steel">Structure only</span>
+          <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+            <h2 class="text-2xl font-semibold font-display">Insights & Field Notes</h2>
+            <button id="addInsightBtn" class="btn rounded-full">Add insight</button>
           </div>
-
-          <div class="grid gap-6 lg:grid-cols-2">
-            <div class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
-              <p class="text-xs uppercase tracking-widest text-steel">Section</p>
-              <h4 class="mt-2 text-lg font-semibold">Competitor Summary</h4>
-              <p class="mt-2 text-sm text-steel">Add pros/cons, price, materials, sizing, durability notes.</p>
-            </div>
-
-            <div class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
-              <p class="text-xs uppercase tracking-widest text-steel">Section</p>
-              <h4 class="mt-2 text-lg font-semibold">Design Ideas</h4>
-              <p class="mt-2 text-sm text-steel">Add feature wishlist + next experiments + decisions.</p>
-            </div>
-          </div>
+          <p class="mt-3 max-w-2xl text-sm text-steel">Loaded from Supabase table <code>insights</code>.</p>
         </div>
+
+        <div id="insightsGrid" class="grid gap-6 lg:grid-cols-2"></div>
       </section>
     </main>
 
+    <!-- ADMIN PRODUCT MODAL -->
+    <div id="adminModal" class="modal-backdrop">
+      <div class="modal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-steel">Admin</p>
+            <h3 class="mt-2 text-2xl font-semibold font-display" id="adminTitle">Edit product</h3>
+            <p class="mt-2 text-sm text-steel">Create or update products and related items.</p>
+          </div>
+          <button id="closeAdmin" class="btn rounded-full">Close</button>
+        </div>
+
+        <div class="mt-6 grid gap-4 lg:grid-cols-2">
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Slug (unique)</label>
+            <input id="pSlug" class="input mt-2 text-sm text-fg" placeholder="stanton-glove-v1" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Status</label>
+            <select id="pStatus" class="input mt-2 text-sm text-fg">
+              <option value="production">Production</option>
+              <option value="development">Development</option>
+              <option value="discontinued">Discontinued</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Name</label>
+            <input id="pName" class="input mt-2 text-sm text-fg" placeholder="Stanton Glove" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Version</label>
+            <input id="pVersion" class="input mt-2 text-sm text-fg" placeholder="V1" />
+          </div>
+          <div class="lg:col-span-2">
+            <label class="text-xs uppercase tracking-widest text-steel">Description</label>
+            <textarea id="pDescription" class="input mt-2 text-sm text-fg" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-2">
+          <button id="saveProductBtn" class="btn rounded-full">Save</button>
+          <span id="adminMsg" class="ml-2 text-sm text-steel"></span>
+        </div>
+
+        <!-- Images upload -->
+        <div class="mt-8 border-t border-line/80 pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-steel">Images</h4>
+            <div class="flex items-center gap-2">
+              <input id="imageFile" type="file" accept="image/*" class="text-sm text-steel" />
+              <button id="uploadImageBtn" class="btn rounded-full">Upload</button>
+            </div>
+          </div>
+          <div id="imagesList" class="mt-4 grid gap-3 sm:grid-cols-2"></div>
+        </div>
+
+        <!-- Tech packs upload -->
+        <div class="mt-8 border-t border-line/80 pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-steel">Tech Packs (PDF)</h4>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="techLabel" class="input text-sm text-fg" placeholder='Label e.g. "02/24 - Final Samples revision..."' />
+              <input id="techFile" type="file" accept="application/pdf" class="text-sm text-steel" />
+              <button id="uploadTechBtn" class="btn rounded-full">Add</button>
+            </div>
+          </div>
+          <div id="techList" class="mt-4 space-y-2"></div>
+        </div>
+
+        <!-- Issues -->
+        <div class="mt-8 border-t border-line/80 pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-steel">Issues</h4>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="issueText" class="input text-sm text-fg" placeholder="Issue..." />
+              <input id="issueResolution" class="input text-sm text-fg" placeholder="Resolution..." />
+              <button id="addIssueBtn" class="btn rounded-full">Add</button>
+            </div>
+          </div>
+          <div id="issuesList" class="mt-4 space-y-2"></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="mt-8 border-t border-line/80 pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-steel">Next steps</h4>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="noteText" class="input text-sm text-fg" placeholder="Note..." />
+              <button id="addNoteBtn" class="btn rounded-full">Add</button>
+            </div>
+          </div>
+          <div id="notesList" class="mt-4 space-y-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORICAL MODAL -->
+    <div id="historicalModal" class="modal-backdrop">
+      <div class="modal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-steel">Historical</p>
+            <h3 class="mt-2 text-2xl font-semibold font-display" id="histTitle">Add note</h3>
+          </div>
+          <button id="closeHistorical" class="btn rounded-full">Close</button>
+        </div>
+
+        <div class="mt-6 grid gap-4">
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Title</label>
+            <input id="hTitle" class="input mt-2 text-sm text-fg" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Updated date</label>
+            <input id="hDate" type="date" class="input mt-2 text-sm text-fg" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Summary (1 per line)</label>
+            <textarea id="hSummary" class="input mt-2 text-sm text-fg" rows="6" placeholder="Line 1&#10;Line 2"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between gap-3">
+          <span id="histMsg" class="text-sm text-steel"></span>
+          <div class="flex gap-2">
+            <button id="saveHistoricalBtn" class="btn rounded-full">Save</button>
+            <button id="deleteHistoricalBtn" class="btn rounded-full btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS MODAL -->
+    <div id="insightModal" class="modal-backdrop">
+      <div class="modal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-steel">Insight</p>
+            <h3 class="mt-2 text-2xl font-semibold font-display" id="insightTitle">Add insight</h3>
+          </div>
+          <button id="closeInsight" class="btn rounded-full">Close</button>
+        </div>
+
+        <div class="mt-6 grid gap-4">
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Title</label>
+            <input id="iTitle" class="input mt-2 text-sm text-fg" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Status</label>
+            <input id="iStatus" class="input mt-2 text-sm text-fg" placeholder="Reviewed" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Image URL</label>
+            <input id="iImageUrl" class="input mt-2 text-sm text-fg" placeholder="Fotos/..." />
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <input id="iImageFile" type="file" accept="image/*" class="text-sm text-steel" />
+            <button id="uploadInsightImageBtn" class="btn rounded-full">Upload image</button>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Notes (1 per line)</label>
+            <textarea id="iNotes" class="input mt-2 text-sm text-fg" rows="4"></textarea>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Actions (1 per line)</label>
+            <textarea id="iActions" class="input mt-2 text-sm text-fg" rows="4"></textarea>
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Questions (1 per line)</label>
+            <textarea id="iQuestions" class="input mt-2 text-sm text-fg" rows="4"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between gap-3">
+          <span id="insightMsg" class="text-sm text-steel"></span>
+          <div class="flex gap-2">
+            <button id="saveInsightBtn" class="btn rounded-full">Save</button>
+            <button id="deleteInsightBtn" class="btn rounded-full btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       // =========================
-      // VIEW STATE
-      // - Roster is "static": buttons + single product view
-      // - Clicking a button shows a full-page-feel product view
-      // - Product view expanded by default
+      // CONFIG (EDIT THESE)
       // =========================
-      let activeProductId = null;
+      const SUPABASE_URL = "https://sfdkzoqeysqjduewdnec.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZGt6b3FleXNxamR1ZXdkbmVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxNDI3NjgsImV4cCI6MjA4NTcxODc2OH0.E_8oI3QxQpCv1jtCTKxTccS4Nfy4gr1eIzfzBljuPck";
+      const BUCKET = "product-assets";
+
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       // =========================
-      // DATA
+      // STATE
       // =========================
-      const products = [
-        {
-          id: "stanton-glove-v1",
-          name: "Stanton Glove",
-          version: "V1",
-          status: "production",
-          description: "MIG welder glove - First generation that will be superseeded with Gen 2",
-          images: [
-            { src: "Fotos/StantonV1Black.JPG", alt: "Stanton Glove V1 in black" },
-            { src: "Fotos/StantonV1Gold.JPG", alt: "Stanton Glove V1 in gold" },
-          ],
-          techPacks: [
-            {
-              label:
-                '05/12/22 - Updated Tech Pack; 6" gauntlet, full Kevlar knit lining, removed decorative stitch, seams turned in.',
-              url: "./TechPacks/1898_GLOVES_UPDATED_TECH_120522.pdf",
-            },
-            {
-              label:
-                "09/18/23 - Stanton Solid Tech Pack; nubuck (0.8-1.0mm), Kevlar knit lining, Kevlar thread, D-ring, solid styling.",
-              url: "./TechPacks/1898_STANTON_GLOVES_SOLID_LATEST_091823_SM.pdf",
-            },
-            {
-              label: "12/16/23 - Final Samples; reference sample set.",
-              url: "./TechPacks/1898_GLOVES_FINAL_SAMPLES_1223.pdf",
-            },
-            {
-              label: "02/24 - Final Samples revision; black Kevlar linings + printed label.",
-              url: "./TechPacks/1898_GLOVES_FINAL_SAMPLES_0224.pdf",
-            },
-          ],
-          issues: [
-            { issue: "Runs small / inconsistent sizing.", resolution: "Advise size up; sizing refined across rounds." },
-            { issue: "Inner finger wears out.", resolution: "Extra padding + reinforcement zones." },
-            { issue: "Seam fails thumb-index web.", resolution: "Reinforced construction in web." },
-            { issue: "Internal seams discomfort.", resolution: "Turned finger seams outward." },
-            {
-              issue: "Blowouts at stress seams.",
-              resolution: "Improved seam placement + construction via durability testing.",
-            },
-            { issue: "Heat protection insufficient early.", resolution: "Full Kevlar knit lining throughout." },
-            { issue: "Hardware inconsistencies.", resolution: "Standardized D-ring (V1); later removed for V2." },
-            { issue: "Gauntlet too narrow for cold weather.", resolution: "Wider opening led to V2." },
-            {
-              issue:
-                "No clear way to attach the glove to the apron (missing hook/loop system between glove and apron).",
-              resolution: "",
-            },
-            {
-              issue:
-                "Trigger snap / snap hook hardware feels weaker than competitor versions (inferior robustness).",
-              resolution: "",
-            },
-            {
-              issue:
-                "Snap hook finish does not match the desired roughed-out look (competitors buy shiny hardware and condition/tumble it to dull the finish).",
-              resolution: "",
-            },
-          ],
-          notes: [
-            "Order additional inventory (focus on smaller sizes).",
-            "Keep collecting fit feedback (especially as V2 is finalized).",
-          ],
-        },
-
-        {
-          id: "stanton-glove-v2",
-          name: "Stanton Glove",
-          version: "V2",
-          status: "development",
-          description:
-            "Based on V1 with: wider gauntlet opening for thick winter jackets; remove metal D-ring -> leather loop; more finger protection w/ extra leather layers. No multi-width variants; tracked as V2.",
-          images: [{ src: "Fotos/StantonV2.jpeg", alt: "Stanton Glove V2 sample", fit: "contain" }],
-          techPacks: [{ label: "Inherits Stanton baseline chain until updated V2 pattern/tech pack arrives.", url: "#" }],
-          issues: [],
-          notes: [
-            "Exploring leather booking ~300 pairs (initial run likely ~150).",
-            "Confirm leather booking + schedule with Kabir.",
-            "Request updated V2 tech pack/pattern explicitly calling out wider opening/circumference.",
-            "Update Shopify naming: Stanton V1 vs Stanton V2.",
-          ],
-        },
-
-        {
-          id: "oxyacetylene-glove",
-          name: "Oxyacetylene Glove",
-          version: "",
-          status: "development",
-          description:
-            "Originated from incorrect TIG sample with added protection; feedback from David Madero suggests short cuff + higher protection suits oxy-acetylene welding.",
-          images: [{ src: "Fotos/OxyGlove.jpeg", alt: "Oxyacetylene glove sample", fit: "contain" }],
-          techPacks: [],
-          issues: [],
-          notes: [
-            "Await final field feedback from David Madero (approval gate).",
-            "If approved, proceed with limited run (20-30 pairs).",
-            "One name only (avoid multiple names).",
-          ],
-        },
-
-        {
-          id: "tig-unlined-glove",
-          name: "TIG Unlined Glove",
-          version: "",
-          status: "development",
-          description:
-            "TIG must be unlined for tactile feel/dexterity. Factory produced samples incorrectly (lined) - rejected.",
-          images: [{ src: "Fotos/TIGGlove.jpeg", alt: "TIG unlined glove sample", fit: "contain" }],
-          techPacks: [{ label: "Use unlined baseline reference until Kabir provides specific TIG unlined tech pack.", url: "#" }],
-          issues: [{ issue: "Factory produced samples incorrectly (lined).", resolution: "Rejected; awaiting unlined samples." }],
-          notes: [
-            "Receive corrected unlined samples from Kabir.",
-            "Expect 1-2 revision rounds for fit tuning before approval.",
-          ],
-        },
-
-        {
-          id: "miner-glove",
-          name: "Miner Glove",
-          version: "",
-          status: "discontinued",
-          description: "Not short-term. Priority: Stanton V2 + Oxy + TIG unlined first, then revisit Miner.",
-          images: [{ src: "Fotos/MiningGlove.jpeg", alt: "Miner glove sample", fit: "contain" }],
-          techPacks: [],
-          issues: [],
-          notes: ["Collect more field feedback.", "Decide whether to proceed to prototype tech pack or keep parked."],
-        },
-
-        {
-          id: "iron-jim-v1",
-          name: "Welding Apron",
-          version: "Gen1",
-          status: "production",
-          description:
-            "Leather welding apron with X-back strap system. Single version evolved via internal refinements: strap ergonomics, weight distribution, sizing, durability.  Gen 2 has waist strap",
-          images: [
-            { src: "Fotos/ApronBlack.jpg", alt: "Iron Jim V1 apron in black" },
-            { src: "Fotos/ApronGold.jpg", alt: "Iron Jim V1 apron in gold" },
-          ],
-          techPacks: [
-            { label: '07/18/23 - Apron Tech Pack (Split Front X-Back); base design with X-back system.', url: "./TechPacks/1898_APRON_TECH_FINAL.pdf" },
-            { label: "01/17/24 - Final Samples Tech Pack; updated specifications for the production version.", url: "./TechPacks/1898_APRONS_FINAL_SAMPLES_0124.pdf" },
-            { label: "02/24 - Revised Final Samples Tech Pack; post-review revision (revised date).", url: "./TechPacks/1898_APRONS_FINAL_SAMPLES_0224.pdf" },
-            { label: "09/27/24 - Features Annotated; front/back feature annotations.", url: "./TechPacks/1898_APRON_ANNOTATED.pdf" },
-          ],
-          issues: [
-            { issue: "Shoulder straps come loose.", resolution: "Added back connector strap." },
-            { issue: "Uneven weight distribution.", resolution: "X-back system." },
-            { issue: "Fit inconsistency.", resolution: "Standardized sizing using Medium reference." },
-            { issue: "Bulky seams.", resolution: "Shaved edges / reduced bulk." },
-            { issue: "Hardware durability.", resolution: "Standardized hardware + eyelet spacing 2cm." },
-            { issue: "Pocket usability.", resolution: "Corrected sizing/placement." },
-            { issue: "Strap adjustment slips.", resolution: "Strap keepers/belt loops." },
-            { issue: "Full-grain leather tested but underperformed.", resolution: "Abandoned; returned to suede." },
-            { issue: "Need shorter straps for compact sizes (current strap length not ideal).", resolution: "" },
-            { issue: "No clear way to attach gloves to the apron (D-ring exists but there is no functional glove connection).", resolution: "" },
-            { issue: "Rear strap system does not allow the welder to easily put on/remove the apron while wearing a helmet (competitor uses wider straps that enable this).", resolution: "" },
-            { issue: "Top fastening system needs improvement (strong + reliable, better look).", resolution: "Explore competitor-style fastening; design a cleaner, stronger solution that reduces snag risk." },
-            { issue: "Stitching reinforcement at stress points may be insufficient for next version.", resolution: "Confirm double-stitching with Kevlar thread; verify thread sizing/content; add bartack finishing at ALL stress points." },
-            { issue: "Pockets above kangaroo pouch can become shrapnel/debris collectors for welding variant.", resolution: "Option A: remove upper pockets and keep kangaroo pouch only. Option B: add a simple flap (1.5–2in) to prevent debris without buckles/snaps." },
-            { issue: "X-strap vs alternative strap systems (usability with helmet on/off).", resolution: "Evaluate Y-strap concept that allows don/doff while helmet stays on; keep X-strap option for users who prefer it." },
-          ],
-          notes: [
-            "Collect field testing notes from Alisyn’s open house tester once shop time resumes.",
-            "Prototype/compare: X-strap vs Y-strap comfort + don/doff with helmet.",
-            "Decide pocket approach for welding variant: remove upper pockets vs add flap (1.5–2in).",
-            "Confirm double stitch standard + bartack map for all stress points (document in tech pack).",
-          ],
-        },
-
-        {
-          id: "firefighter-gloves",
-          name: "Firefighter Gloves",
-          version: "",
-          status: "development",
-          description:
-            "Structural firefighting gloves with enhanced heat protection and dexterity. Early concept stage - research and development needed.",
-          images: [],
-          techPacks: [],
-          issues: [],
-          notes: [
-            "Research NFPA 1971 standards for certification requirements.",
-            "Investigate competitor products (Fire-Dex, Shelby, Pro-Tech).",
-            "Source fire-resistant materials (Kevlar, Nomex, PBI).",
-            "Develop prototypes for field testing with fire departments.",
-            "Timeline: Q3 2025 target for first samples.",
-          ],
-        },
-
-        {
-          id: "welding-sleeves",
-          name: "Welding Sleeves",
-          version: "",
-          status: "development",
-          description: "Spatter-resistant leather welding sleeves for arm protection. Complements existing glove and apron lineup.",
-          images: [],
-          techPacks: [],
-          issues: [],
-          notes: [
-            "Design with adjustable straps for secure fit.",
-            "Consider spatter-resistant materials vs traditional leather.",
-            "Research competitor pricing (Tillman, Steiner, Lincoln).",
-            'Determine length options (18" vs 24").',
-            "Timeline: Q2 2025 target for prototype.",
-          ],
-        },
-
-        // NEW PRODUCT requested by Matthew
-        {
-          id: "plasma-cutting-gloves",
-          name: "Plasma Cutting Gloves",
-          version: "",
-          status: "development",
-          description: "Alisyn from Meraki Metal Works wants to build out such a glove",
-          images: [],
-          techPacks: [],
-          issues: [],
-          notes: [],
-        },
-
-        // ✅ NEW PRODUCT: Kids Gloves (Fortnite-style neon, NOT 1898-branded)
-        {
-          id: "kids-gloves",
-          name: "Kids Gloves",
-          version: "",
-          status: "development",
-          description:
-            "Kids-focused glove concept. Not launched as an 1898 glove. Bright neon colors (Fortnite-style) with a strict goal: be as cheap as possible while still safe/usable. Intended for kids/youth; optimized for affordability and fun colorways.",
-          images: [],
-          techPacks: [],
-          issues: [
-            {
-              issue: "Brand positioning risk (confusion with 1898 premium line).",
-              resolution: "Keep branding separate from 1898; distinct naming, packaging, and product page.",
-            },
-            {
-              issue: "Cost target vs durability/heat protection tradeoffs.",
-              resolution: "Define minimum acceptable protection/durability; choose materials/lining based on target cost.",
-            },
-            {
-              issue: "Sizing needs to be clear for kids/youth (avoid returns).",
-              resolution: "Create simplified youth sizing chart + recommended age/hand measurements.",
-            },
-          ],
-          notes: [
-            "Define colorways (examples): Neon Green, Neon Pink, Neon Blue, Neon Orange, Neon Purple; consider 2-tone options.",
-            "Define size run (youth): YS / YM / YL (or numeric hand circumference spec).",
-            "Decide material stack for lowest cost (leather vs synthetic vs hybrid); confirm minimum protection requirements.",
-            "Decide if cuff is short or mid (likely shorter for dexterity + cost).",
-            "Add packaging direction: non-1898 branding, kid-friendly, high-contrast colors.",
-            "Once Victor is added to chat: capture more constraints (target price, channel, launch timeline).",
-          ],
-        },
-      ];
-
-      const historical = [
-        {
-          id: "material-testing-full-grain-vs-sueded",
-          title: "Material & Testing Notes - Full Grain vs Sueded Leather",
-          updated: "01/29/2026",
-          summary: [
-            "Explored full grain leather (smooth/glossy like motorcycle jacket leather) for gloves.",
-            "Under welding heat: discoloration, shrinkage/pulling, reduced heat protection vs sueded.",
-            "Feedback (Pedro Drops) confirmed full grain underperformed.",
-            "Decision: abandon full grain for glove construction; continue with sueded leather going forward.",
-          ],
-        },
-      ];
-
-      const statusLabels = {
-        production: "Production",
-        development: "Development",
-        discontinued: "Discontinued",
-      };
-
-      const statusStyles = {
-        production: "border-emerald-400/60 text-emerald-200 bg-emerald-500/10",
-        development: "border-amber-300/60 text-amber-200 bg-amber-400/10",
-        discontinued: "border-stone-500/60 text-stone-300 bg-stone-500/10",
-      };
+      let activeProductId = null; // uuid
+      let products = [];
+      let productDetails = new Map(); // product_id -> {images, techPacks, issues, notes}
+      let historical = [];
+      let insights = [];
+      const imageState = {}; // productId -> index
 
       // =========================
       // DOM
@@ -862,8 +593,9 @@
       const productButtons = document.getElementById("productButtons");
       const resultsMeta = document.getElementById("resultsMeta");
       const productView = document.getElementById("productView");
-
       const historicalList = document.getElementById("historicalList");
+      const insightsGrid = document.getElementById("insightsGrid");
+      const updatedBadge = document.getElementById("updatedBadge");
 
       const searchInput = document.getElementById("searchInput");
       const statusFilter = document.getElementById("statusFilter");
@@ -878,17 +610,92 @@
       const rosterFilters = document.getElementById("rosterFilters");
       const calendarSection = document.getElementById("calendarSection");
 
+      const createProductBtn = document.getElementById("createProductBtn");
+      const addHistoricalBtn = document.getElementById("addHistoricalBtn");
+      const addInsightBtn = document.getElementById("addInsightBtn");
+
+      // Admin modal
+      const adminModal = document.getElementById("adminModal");
+      const closeAdmin = document.getElementById("closeAdmin");
+      const adminTitle = document.getElementById("adminTitle");
+      const adminMsg = document.getElementById("adminMsg");
+
+      const pSlug = document.getElementById("pSlug");
+      const pName = document.getElementById("pName");
+      const pVersion = document.getElementById("pVersion");
+      const pStatus = document.getElementById("pStatus");
+      const pDescription = document.getElementById("pDescription");
+
+      const saveProductBtn = document.getElementById("saveProductBtn");
+
+      const imageFile = document.getElementById("imageFile");
+      const uploadImageBtn = document.getElementById("uploadImageBtn");
+      const imagesList = document.getElementById("imagesList");
+
+      const techLabel = document.getElementById("techLabel");
+      const techFile = document.getElementById("techFile");
+      const uploadTechBtn = document.getElementById("uploadTechBtn");
+      const techList = document.getElementById("techList");
+
+      const issueText = document.getElementById("issueText");
+      const issueResolution = document.getElementById("issueResolution");
+      const addIssueBtn = document.getElementById("addIssueBtn");
+      const issuesList = document.getElementById("issuesList");
+
+      const noteText = document.getElementById("noteText");
+      const addNoteBtn = document.getElementById("addNoteBtn");
+      const notesList = document.getElementById("notesList");
+
+      // Historical modal
+      const historicalModal = document.getElementById("historicalModal");
+      const closeHistorical = document.getElementById("closeHistorical");
+      const histTitle = document.getElementById("histTitle");
+      const hTitle = document.getElementById("hTitle");
+      const hDate = document.getElementById("hDate");
+      const hSummary = document.getElementById("hSummary");
+      const histMsg = document.getElementById("histMsg");
+      const saveHistoricalBtn = document.getElementById("saveHistoricalBtn");
+      const deleteHistoricalBtn = document.getElementById("deleteHistoricalBtn");
+      let editingHistoricalId = null;
+
+      // Insights modal
+      const insightModal = document.getElementById("insightModal");
+      const closeInsight = document.getElementById("closeInsight");
+      const insightTitle = document.getElementById("insightTitle");
+      const iTitle = document.getElementById("iTitle");
+      const iStatus = document.getElementById("iStatus");
+      const iImageUrl = document.getElementById("iImageUrl");
+      const iImageFile = document.getElementById("iImageFile");
+      const uploadInsightImageBtn = document.getElementById("uploadInsightImageBtn");
+      const iNotes = document.getElementById("iNotes");
+      const iActions = document.getElementById("iActions");
+      const iQuestions = document.getElementById("iQuestions");
+      const insightMsg = document.getElementById("insightMsg");
+      const saveInsightBtn = document.getElementById("saveInsightBtn");
+      const deleteInsightBtn = document.getElementById("deleteInsightBtn");
+      let editingInsightId = null;
+
       // =========================
       // HELPERS
       // =========================
       const sanitize = (value) => String(value || "").toLowerCase().trim();
       const escapeHTML = (value) =>
-        String(value)
+        String(value ?? "")
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#39;");
+
+      const openModal = (el) => el.classList.add("open");
+      const closeModal = (el) => el.classList.remove("open");
+
+      const statusLabels = { production: "Production", development: "Development", discontinued: "Discontinued" };
+      const statusStyles = {
+        production: "border-emerald-400/60 text-emerald-200 bg-emerald-500/10",
+        development: "border-amber-300/60 text-amber-200 bg-amber-400/10",
+        discontinued: "border-stone-500/60 text-stone-300 bg-stone-500/10",
+      };
 
       const icons = {
         tech: `<svg aria-hidden="true" class="h-4 w-4 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
@@ -920,15 +727,160 @@
         </svg>`,
       };
 
-      // =========================
-      // IMAGE NAV (single product view)
-      // =========================
-      const imageState = {}; // productId -> index
+      function safeFileName(name) {
+        return String(name || "file").replace(/[^a-z0-9._-]+/gi, "_");
+      }
+
+      function storagePathFromPublicUrl(url) {
+        if (!url) return null;
+        const marker = `/storage/v1/object/public/${BUCKET}/`;
+        const idx = url.indexOf(marker);
+        if (idx === -1) return null;
+        return url.slice(idx + marker.length);
+      }
+
+      async function uploadToStorage({ file, folder }) {
+        const fileName = `${Date.now()}_${safeFileName(file.name)}`;
+        const path = `${folder}/${fileName}`;
+
+        const { error: upErr } = await supabaseClient.storage.from(BUCKET).upload(path, file, { upsert: false });
+        if (upErr) throw upErr;
+
+        const { data } = supabaseClient.storage.from(BUCKET).getPublicUrl(path);
+        return { path, publicUrl: data.publicUrl };
+      }
+
+      function formatUpdatedBadge(dateString) {
+        if (!dateString) return "Updated —";
+        const d = new Date(dateString);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `Updated ${yyyy}-${mm}-${dd}`;
+      }
 
       const getImageFitClass = (image) => (image && image.fit === "contain" ? "object-contain" : "object-cover");
 
+      // =========================
+      // LOAD DATA
+      // =========================
+      async function loadAll() {
+        // Products
+        const { data: prods, error: prodErr } = await supabaseClient
+          .from("products")
+          .select("*")
+          .order("name", { ascending: true });
+
+        if (prodErr) {
+          productButtons.innerHTML = `
+            <div class="rounded-none border border-line/80 bg-slate/80 p-5 text-sm text-steel">
+              Error loading products: ${escapeHTML(prodErr.message)}
+              <div class="mt-2 text-xs text-steel">Check: SUPABASE_URL / KEY, and RLS disabled or public policies.</div>
+            </div>
+          `;
+          return;
+        }
+
+        products = prods || [];
+
+        // Updated badge from latest updated_at
+        const latest = products.reduce((acc, p) => Math.max(acc, new Date(p.updated_at || 0).getTime()), 0);
+        updatedBadge.textContent = latest ? formatUpdatedBadge(new Date(latest).toISOString()) : "Updated —";
+
+        // Details (images / tech / issues / notes)
+        await loadDetailsForProducts(products.map((p) => p.id));
+
+        // Historical
+        const { data: hist } = await supabaseClient
+          .from("historical_notes")
+          .select("*")
+          .order("updated_date", { ascending: false })
+          .order("created_at", { ascending: false });
+        historical = hist || [];
+
+        // Insights (optional table)
+        const { data: ins, error: insErr } = await supabaseClient
+          .from("insights")
+          .select("*")
+          .order("updated_at", { ascending: false });
+
+        insights = insErr ? [] : (ins || []);
+
+        render();
+        renderHistorical();
+        renderInsights();
+      }
+
+      async function loadDetailsForProducts(productIds) {
+        productDetails.clear();
+        if (!productIds.length) return;
+
+        const [imgRes, techRes, issueRes, noteRes] = await Promise.all([
+          supabaseClient.from("product_images").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
+          supabaseClient.from("tech_packs").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
+          supabaseClient.from("product_issues").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
+          supabaseClient.from("product_notes").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
+        ]);
+
+        const ensure = (id) => {
+          if (!productDetails.has(id)) productDetails.set(id, { images: [], techPacks: [], issues: [], notes: [] });
+          return productDetails.get(id);
+        };
+
+        (imgRes.data || []).forEach((x) => ensure(x.product_id).images.push(x));
+        (techRes.data || []).forEach((x) => ensure(x.product_id).techPacks.push(x));
+        (issueRes.data || []).forEach((x) => ensure(x.product_id).issues.push(x));
+        (noteRes.data || []).forEach((x) => ensure(x.product_id).notes.push(x));
+      }
+
+      // =========================
+      // FILTERS + RENDER
+      // =========================
+      const getFilteredProducts = () => {
+        const query = sanitize(searchInput.value || "");
+        const status = statusFilter.value;
+
+        return products.filter((p) => {
+          const matchesStatus = status === "all" || p.status === status;
+          const searchable = `${p.name} ${p.version || ""} ${p.description || ""} ${p.id || ""}`;
+          const matchesQuery = !query || sanitize(searchable).includes(query);
+          return matchesStatus && matchesQuery;
+        });
+      };
+
+      const renderProductButtons = (items) => {
+        if (!items.length) {
+          productButtons.innerHTML = `
+            <div class="rounded-none border border-line/80 bg-slate/80 p-5 text-sm text-steel">
+              No products match your filters.
+            </div>
+          `;
+          return;
+        }
+
+        productButtons.innerHTML = items
+          .map((p) => {
+            const label = `${p.name}${p.version ? " " + p.version : ""}`.trim();
+            const isActive = activeProductId === p.id;
+            return `
+              <button
+                type="button"
+                data-open-product="${escapeHTML(p.id)}"
+                class="rounded-full border ${
+                  isActive ? "border-accent/70 text-fg" : "border-line/80 text-steel"
+                } bg-slate/80 px-4 py-2 text-xs uppercase tracking-widest transition hover:border-accent/60 hover:text-fg"
+                aria-pressed="${isActive ? "true" : "false"}"
+              >
+                ${escapeHTML(label)}
+              </button>
+            `;
+          })
+          .join("");
+      };
+
       const renderImageArea = (product) => {
-        const images = product.images || [];
+        const details = productDetails.get(product.id) || { images: [] };
+        const images = details.images || [];
         if (!images.length) {
           return `
             <div class="flex h-56 items-center justify-center gap-2 border border-dashed border-line bg-ink text-xs uppercase tracking-[0.3em] text-steel">
@@ -972,9 +924,8 @@
         return `
           <div class="group relative flex h-64 items-center justify-center overflow-hidden border border-line bg-ink">
             <img
-              data-image="true"
               src="${escapeHTML(image.src)}"
-              alt="${escapeHTML(image.alt)}"
+              alt="${escapeHTML(image.alt || "")}"
               class="h-full w-full ${getImageFitClass(image)} transition duration-500 group-hover:scale-[1.02]"
               loading="lazy"
             />
@@ -984,42 +935,6 @@
         `;
       };
 
-      // =========================
-      // ROSTER BUTTONS
-      // =========================
-      const renderProductButtons = (items) => {
-        if (!items.length) {
-          productButtons.innerHTML = `
-            <div class="rounded-none border border-line/80 bg-slate/80 p-5 text-sm text-steel">
-              No products match your filters.
-            </div>
-          `;
-          return;
-        }
-
-        productButtons.innerHTML = items
-          .map((p) => {
-            const label = `${p.name}${p.version ? " " + p.version : ""}`.trim();
-            const isActive = activeProductId === p.id;
-            return `
-              <button
-                type="button"
-                data-open-product="${escapeHTML(p.id)}"
-                class="rounded-full border ${
-                  isActive ? "border-accent/70 text-fg" : "border-line/80 text-steel"
-                } bg-slate/80 px-4 py-2 text-xs uppercase tracking-widest transition hover:border-accent/60 hover:text-fg"
-                aria-pressed="${isActive ? "true" : "false"}"
-              >
-                ${escapeHTML(label)}
-              </button>
-            `;
-          })
-          .join("");
-      };
-
-      // =========================
-      // PRODUCT VIEW (expanded by default)
-      // =========================
       const renderProductView = (product) => {
         if (!product) {
           productView.innerHTML = `
@@ -1029,28 +944,28 @@
               <p class="mt-3 max-w-2xl text-sm text-steel">
                 Filters stay at the top. Buttons select the product. Details show here.
               </p>
+              <div class="mt-6 text-xs uppercase tracking-widest text-steel">
+                Use the Create product button to add a new entry.
+              </div>
             </div>
           `;
           return;
         }
 
+        const details = productDetails.get(product.id) || { images: [], techPacks: [], issues: [], notes: [] };
         const title = `${product.name}${product.version ? " " + product.version : ""}`.trim();
 
         const techPacks =
-          (product.techPacks || []).length > 0
+          (details.techPacks || []).length > 0
             ? `<ul class="mt-3 space-y-2">
-                ${(product.techPacks || [])
+                ${(details.techPacks || [])
                   .map((pack) => {
-                    const isLink = pack.url && pack.url !== "#";
+                    const href = pack.url || "#";
                     return `
                       <li>
-                        ${
-                          isLink
-                            ? `<a class="text-sm text-fg underline decoration-line underline-offset-4 hover:text-accent" href="${escapeHTML(
-                                pack.url
-                              )}">${escapeHTML(pack.label)}</a>`
-                            : `<span class="text-sm text-steel">${escapeHTML(pack.label)}</span>`
-                        }
+                        <a class="text-sm text-fg underline decoration-line underline-offset-4 hover:text-accent" href="${escapeHTML(href)}" target="_blank" rel="noopener">
+                          ${escapeHTML(pack.label)}
+                        </a>
                       </li>
                     `;
                   })
@@ -1059,9 +974,9 @@
             : '<p class="mt-3 text-sm text-steel">No tech packs logged yet.</p>';
 
         const issues =
-          (product.issues || []).length > 0
+          (details.issues || []).length > 0
             ? `<div class="mt-3 space-y-3">
-                ${(product.issues || [])
+                ${(details.issues || [])
                   .map(
                     (item) => `
                     <div class="rounded-none border border-line bg-ink p-3">
@@ -1077,40 +992,42 @@
             : '<p class="mt-3 text-sm text-steel">No issues logged.</p>';
 
         const notes =
-          (product.notes || []).length > 0
+          (details.notes || []).length > 0
             ? `<ul class="mt-3 space-y-2 text-sm text-steel">
-                ${(product.notes || []).map((note) => `<li>• ${escapeHTML(note)}</li>`).join("")}
+                ${(details.notes || []).map((n) => `<li>• ${escapeHTML(n.note)}</li>`).join("")}
               </ul>`
             : '<p class="mt-3 text-sm text-steel">No next steps yet.</p>';
 
         productView.innerHTML = `
-          <article class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm" data-product-id="${escapeHTML(
-            product.id
-          )}">
+          <article class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm" data-product-id="${escapeHTML(product.id)}">
             <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-              <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1 text-xs uppercase tracking-widest ${
-                statusStyles[product.status]
-              }">${escapeHTML(statusLabels[product.status])}</span>
+              <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1 text-xs uppercase tracking-widest ${statusStyles[product.status]}">
+                ${escapeHTML(statusLabels[product.status])}
+              </span>
 
-              <button
-                type="button"
-                id="backToRoster"
-                class="rounded-full border border-line/80 bg-ink/40 px-4 py-2 text-xs uppercase tracking-widest text-steel transition hover:border-accent/60 hover:text-fg"
-              >
-                ← Back to roster
-              </button>
+              <div class="flex items-center gap-2">
+                <button type="button" id="editProductBtn" class="btn rounded-full">Edit</button>
+                <button type="button" id="deleteProductBtn" class="btn rounded-full btn-danger">Delete</button>
+                <button
+                  type="button"
+                  id="backToRoster"
+                  class="rounded-full border border-line/80 bg-ink/40 px-4 py-2 text-xs uppercase tracking-widest text-steel transition hover:border-accent/60 hover:text-fg"
+                >
+                  ← Back to roster
+                </button>
+              </div>
             </div>
 
             <div>
               <h2 class="text-3xl sm:text-4xl font-semibold font-display">${escapeHTML(title)}</h2>
-              <p class="mt-3 text-sm text-steel max-w-3xl">${escapeHTML(product.description)}</p>
+              <p class="mt-3 text-sm text-steel max-w-3xl">${escapeHTML(product.description || "")}</p>
+              <p class="mt-2 text-xs uppercase tracking-widest text-steel">Slug: ${escapeHTML(product.id)}</p>
             </div>
 
             <div class="mt-6">
               ${renderImageArea(product)}
             </div>
 
-            <!-- Expanded by default -->
             <div class="mt-10 space-y-10">
               <section class="border-t border-line/80 pt-6">
                 <h3 class="flex items-center gap-2 text-xs uppercase tracking-widest text-steel">
@@ -1137,9 +1054,6 @@
         `;
       };
 
-      // =========================
-      // HISTORICAL
-      // =========================
       const renderHistorical = () => {
         if (!historical.length) {
           historicalList.innerHTML =
@@ -1150,14 +1064,18 @@
         historicalList.innerHTML = historical
           .map((entry, index) => {
             const delay = Math.min(index * 80, 320);
+            const bullets = Array.isArray(entry.summary) ? entry.summary : [];
             return `
               <article class="card-plate reveal rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm" style="animation-delay:${delay}ms">
-                <div class="border-l-2 border-accent/60 pl-5">
-                  <h3 class="text-lg font-semibold">${escapeHTML(entry.title)}</h3>
-                  <p class="mt-1 text-xs uppercase tracking-widest text-steel">Last Updated ${escapeHTML(entry.updated)}</p>
-                  <ul class="mt-4 space-y-2 text-sm text-steel">
-                    ${entry.summary.map((item) => `<li>${escapeHTML(item)}</li>`).join("")}
-                  </ul>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="border-l-2 border-accent/60 pl-5">
+                    <h3 class="text-lg font-semibold">${escapeHTML(entry.title)}</h3>
+                    <p class="mt-1 text-xs uppercase tracking-widest text-steel">Last Updated ${escapeHTML(entry.updated_date || "")}</p>
+                    <ul class="mt-4 space-y-2 text-sm text-steel">
+                      ${bullets.map((item) => `<li>${escapeHTML(item)}</li>`).join("")}
+                    </ul>
+                  </div>
+                  <button class="btn rounded-full" data-edit-hist="${escapeHTML(entry.id)}">Edit</button>
                 </div>
               </article>
             `;
@@ -1165,35 +1083,83 @@
           .join("");
       };
 
-      // =========================
-      // FILTERS
-      // =========================
-      const getFilteredProducts = () => {
-        const query = sanitize(searchInput.value || "");
-        const status = statusFilter.value;
+      const renderInsights = () => {
+        if (!insights.length) {
+          insightsGrid.innerHTML = `
+            <div class="rounded-none border border-line/80 bg-slate/80 p-6 text-sm text-steel lg:col-span-2">
+              No insights yet (or table not created).
+            </div>
+          `;
+          return;
+        }
 
-        return products.filter((p) => {
-          const matchesStatus = status === "all" || p.status === status;
-          const searchable = `${p.name} ${p.version || ""} ${p.description || ""}`;
-          const matchesQuery = !query || sanitize(searchable).includes(query);
-          return matchesStatus && matchesQuery;
-        });
+        insightsGrid.innerHTML = insights
+          .map((x) => {
+            const notes = Array.isArray(x.notes) ? x.notes : [];
+            const actions = Array.isArray(x.actions) ? x.actions : [];
+            const questions = Array.isArray(x.questions) ? x.questions : [];
+            return `
+            <article class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h3 class="text-xl font-semibold font-display">${escapeHTML(x.title)}</h3>
+                  <p class="mt-2 text-sm text-steel">Field notes / competitor review.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-widest text-emerald-200">
+                    ${escapeHTML(x.status || "Reviewed")}
+                  </span>
+                  <button class="btn rounded-full" data-edit-insight="${escapeHTML(x.id)}">Edit</button>
+                  <button class="btn rounded-full btn-danger" data-del-insight="${escapeHTML(x.id)}">Delete</button>
+                </div>
+              </div>
+
+              <div class="mt-5 overflow-hidden border border-line bg-ink">
+                ${
+                  x.image_public_url
+                    ? `<img src="${escapeHTML(x.image_public_url)}" alt="" class="h-64 w-full object-cover" loading="lazy" />`
+                    : `<div class="flex h-64 items-center justify-center text-xs uppercase tracking-[0.3em] text-steel">No image</div>`
+                }
+              </div>
+
+              <div class="mt-5 space-y-3 text-sm text-steel">
+                ${notes.length ? `
+                <p class="text-xs uppercase tracking-widest text-steel">Notes</p>
+                <ul class="list-disc pl-5 space-y-2">
+                  ${notes.map(n => `<li>${escapeHTML(n)}</li>`).join("")}
+                </ul>` : ""}
+
+                ${actions.length ? `
+                <div class="mt-4 border-t border-line/80 pt-4">
+                  <p class="text-xs uppercase tracking-widest text-steel">Potential Actions</p>
+                  <ul class="list-disc pl-5 space-y-2">
+                    ${actions.map(n => `<li>${escapeHTML(n)}</li>`).join("")}
+                  </ul>
+                </div>` : ""}
+
+                ${questions.length ? `
+                <div class="mt-4 border-t border-line/80 pt-4">
+                  <p class="text-xs uppercase tracking-widest text-steel">Questions</p>
+                  <ul class="list-disc pl-5 space-y-2">
+                    ${questions.map(n => `<li>${escapeHTML(n)}</li>`).join("")}
+                  </ul>
+                </div>` : ""}
+              </div>
+            </article>
+          `;
+          })
+          .join("");
       };
 
-      // =========================
-      // RENDER
-      // =========================
       const render = () => {
         const filtered = getFilteredProducts();
         resultsMeta.textContent = `${filtered.length} product${filtered.length === 1 ? "" : "s"}`;
 
-        // If selected product no longer matches filters, clear selection
         if (activeProductId && !filtered.some((p) => p.id === activeProductId)) {
           activeProductId = null;
         }
 
         renderProductButtons(filtered);
-
         clearSelection.classList.toggle("hidden", !activeProductId);
 
         const selected = activeProductId ? products.find((p) => p.id === activeProductId) : null;
@@ -1201,7 +1167,163 @@
       };
 
       // =========================
-      // EVENTS
+      // ADMIN MODAL HELPERS
+      // =========================
+      async function refreshAdminLists(productId) {
+        const details = productDetails.get(productId) || { images: [], techPacks: [], issues: [], notes: [] };
+
+        imagesList.innerHTML =
+          (details.images || [])
+            .map(
+              (img) => `
+          <div class="rounded-none border border-line bg-ink p-3">
+            <img src="${escapeHTML(img.src)}" class="h-40 w-full object-cover border border-line" />
+            <div class="mt-3 grid gap-2">
+              <input class="input text-sm text-fg" data-img-alt="${escapeHTML(img.id)}" placeholder="Alt text" value="${escapeHTML(img.alt || "")}" />
+              <div class="flex items-center justify-between gap-2">
+                <select class="input text-sm text-fg" data-img-fit="${escapeHTML(img.id)}">
+                  <option value="cover" ${img.fit === "cover" ? "selected" : ""}>cover</option>
+                  <option value="contain" ${img.fit === "contain" ? "selected" : ""}>contain</option>
+                </select>
+                <button class="btn rounded-full btn-danger" data-del-img="${escapeHTML(img.id)}">Delete</button>
+              </div>
+            </div>
+          </div>
+        `
+            )
+            .join("") || `<div class="text-sm text-steel">No images yet.</div>`;
+
+        techList.innerHTML =
+          (details.techPacks || [])
+            .map(
+              (tp) => `
+          <div class="flex flex-wrap items-center justify-between gap-2 rounded-none border border-line bg-ink p-3">
+            <div class="text-sm text-fg">${escapeHTML(tp.label)}</div>
+            <div class="flex items-center gap-2">
+              <a class="text-xs uppercase tracking-widest text-steel underline" href="${escapeHTML(tp.url || "#")}" target="_blank" rel="noopener">Open</a>
+              <button class="btn rounded-full btn-danger" data-del-tech="${escapeHTML(tp.id)}">Delete</button>
+            </div>
+          </div>
+        `
+            )
+            .join("") || `<div class="text-sm text-steel">No tech packs yet.</div>`;
+
+        issuesList.innerHTML =
+          (details.issues || [])
+            .map(
+              (it) => `
+          <div class="rounded-none border border-line bg-ink p-3">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-sm">${escapeHTML(it.issue)}</div>
+              <button class="btn rounded-full btn-danger" data-del-issue="${escapeHTML(it.id)}">Delete</button>
+            </div>
+            <div class="mt-2 text-sm text-steel">Resolution: ${escapeHTML(it.resolution || "")}</div>
+          </div>
+        `
+            )
+            .join("") || `<div class="text-sm text-steel">No issues yet.</div>`;
+
+        notesList.innerHTML =
+          (details.notes || [])
+            .map(
+              (n) => `
+          <div class="flex items-center justify-between gap-2 rounded-none border border-line bg-ink p-3">
+            <div class="text-sm text-steel">• ${escapeHTML(n.note)}</div>
+            <button class="btn rounded-full btn-danger" data-del-note="${escapeHTML(n.id)}">Delete</button>
+          </div>
+        `
+            )
+            .join("") || `<div class="text-sm text-steel">No notes yet.</div>`;
+      }
+
+      async function openAdminForProduct(productId) {
+        const p = products.find((x) => x.id === productId);
+        if (!p) return;
+
+        adminTitle.textContent = "Edit product";
+        saveProductBtn.textContent = "Save";
+        adminMsg.textContent = "";
+
+        pSlug.value = p.id || "";
+        pName.value = p.name || "";
+        pVersion.value = p.version || "";
+        pStatus.value = p.status || "development";
+        pDescription.value = p.description || "";
+
+        await refreshAdminLists(productId);
+        openModal(adminModal);
+      }
+
+      function openAdminForNew() {
+        adminTitle.textContent = "Create product";
+        saveProductBtn.textContent = "Create";
+        adminMsg.textContent = "";
+
+        activeProductId = null;
+
+        pSlug.value = "";
+        pName.value = "";
+        pVersion.value = "";
+        pStatus.value = "development";
+        pDescription.value = "";
+
+        imagesList.innerHTML = "";
+        techList.innerHTML = "";
+        issuesList.innerHTML = "";
+        notesList.innerHTML = "";
+
+        openModal(adminModal);
+      }
+
+      async function deleteActiveProduct() {
+        if (!activeProductId) return;
+        adminMsg.textContent = "Deleting...";
+
+        const { error } = await supabaseClient.from("products").delete().eq("id", activeProductId);
+        if (error) {
+          adminMsg.textContent = `Error: ${error.message}`;
+          return;
+        }
+
+        adminMsg.textContent = "Deleted.";
+        activeProductId = null;
+        closeModal(adminModal);
+        await loadAll();
+      }
+
+      function openInsightForNew() {
+        editingInsightId = null;
+        insightTitle.textContent = "Add insight";
+        insightMsg.textContent = "";
+        iTitle.value = "";
+        iStatus.value = "Reviewed";
+        iImageUrl.value = "";
+        iImageFile.value = "";
+        iNotes.value = "";
+        iActions.value = "";
+        iQuestions.value = "";
+        deleteInsightBtn.classList.add("hidden");
+        openModal(insightModal);
+      }
+
+      function openInsightForEdit(entry) {
+        if (!entry) return;
+        editingInsightId = entry.id;
+        insightTitle.textContent = "Edit insight";
+        insightMsg.textContent = "";
+        iTitle.value = entry.title || "";
+        iStatus.value = entry.status || "Reviewed";
+        iImageUrl.value = entry.image_public_url || "";
+        iImageFile.value = "";
+        iNotes.value = (Array.isArray(entry.notes) ? entry.notes : []).join("\n");
+        iActions.value = (Array.isArray(entry.actions) ? entry.actions : []).join("\n");
+        iQuestions.value = (Array.isArray(entry.questions) ? entry.questions : []).join("\n");
+        deleteInsightBtn.classList.remove("hidden");
+        openModal(insightModal);
+      }
+
+      // =========================
+      // EVENTS: ROSTER
       // =========================
       productButtons.addEventListener("click", (event) => {
         const btn = event.target.closest("[data-open-product]");
@@ -1218,13 +1340,28 @@
 
       productView.addEventListener("click", (event) => {
         const back = event.target.closest("#backToRoster");
-        if (!back) return;
-        activeProductId = null;
-        render();
-        productButtons.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (back) {
+          activeProductId = null;
+          render();
+          productButtons.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+
+        const edit = event.target.closest("#editProductBtn");
+        if (edit && activeProductId) {
+          openAdminForProduct(activeProductId);
+          return;
+        }
+
+        const del = event.target.closest("#deleteProductBtn");
+        if (del && activeProductId) {
+          if (!confirm("Delete this product? This will remove images/tech/notes/issues too.")) return;
+          deleteActiveProduct();
+          return;
+        }
       });
 
-      // Image nav inside product view
+      // Image nav in product view
       productView.addEventListener("click", (event) => {
         const navButton = event.target.closest("[data-image-nav]");
         if (!navButton) return;
@@ -1233,14 +1370,15 @@
         if (!card) return;
 
         const productId = card.getAttribute("data-product-id");
-        const product = products.find((p) => p.id === productId);
-        if (!product || !(product.images || []).length) return;
+        const details = productDetails.get(productId);
+        if (!details || !(details.images || []).length) return;
 
-        const total = product.images.length;
+        const total = details.images.length;
         const dir = Number(navButton.getAttribute("data-dir"));
         const current = imageState[productId] ?? 0;
         imageState[productId] = (current + dir + total) % total;
 
+        const product = products.find((p) => p.id === productId);
         renderProductView(product);
       });
 
@@ -1248,7 +1386,7 @@
       statusFilter.addEventListener("change", render);
 
       // =========================
-      // TABS
+      // EVENTS: TABS
       // =========================
       const showRoster = () => {
         rosterPage.classList.remove("hidden");
@@ -1288,7 +1426,6 @@
       // =========================
       const setTheme = (mode) => {
         document.documentElement.dataset.theme = mode;
-        if (!themeToggle) return;
         const isLight = mode === "light";
         themeToggle.setAttribute("aria-pressed", isLight ? "true" : "false");
         themeToggle.setAttribute("aria-label", isLight ? "Switch to dark mode" : "Switch to light mode");
@@ -1300,18 +1437,464 @@
       const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
       setTheme(storedTheme || (prefersLight ? "light" : "dark"));
 
-      themeToggle?.addEventListener("click", () => {
+      themeToggle.addEventListener("click", () => {
         const nextTheme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
         localStorage.setItem("theme", nextTheme);
         setTheme(nextTheme);
       });
 
       // =========================
+      // ADMIN MODAL EVENTS
+      // =========================
+      createProductBtn.addEventListener("click", openAdminForNew);
+
+      closeAdmin.addEventListener("click", () => closeModal(adminModal));
+      adminModal.addEventListener("click", (e) => { if (e.target === adminModal) closeModal(adminModal); });
+
+      saveProductBtn.addEventListener("click", async () => {
+        adminMsg.textContent = "Saving...";
+        const slug = sanitize(pSlug.value);
+        if (!slug) { adminMsg.textContent = "Slug is required."; return; }
+        if (!pName.value.trim()) { adminMsg.textContent = "Name is required."; return; }
+
+        const payload = {
+          id: slug,
+          name: pName.value.trim(),
+          version: (pVersion.value || "").trim(),
+          status: pStatus.value,
+          description: (pDescription.value || "").trim(),
+        };
+
+        // Update if editing existing product
+        if (activeProductId) {
+          const { error } = await supabaseClient.from("products").update(payload).eq("id", activeProductId);
+          if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+          adminMsg.textContent = "Saved.";
+        } else {
+          const { data, error } = await supabaseClient.from("products").insert(payload).select("*").single();
+          if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+          activeProductId = data.id;
+          adminMsg.textContent = "Created.";
+        }
+
+        await loadAll();
+        if (activeProductId) await openAdminForProduct(activeProductId);
+      });
+
+      // =========================
+      // IMAGES CRUD
+      // =========================
+      uploadImageBtn.addEventListener("click", async () => {
+        if (!activeProductId) { adminMsg.textContent = "Save the product first."; return; }
+        const file = imageFile.files?.[0];
+        if (!file) { adminMsg.textContent = "Choose an image."; return; }
+        adminMsg.textContent = "Uploading image...";
+
+        try {
+          const { path, publicUrl } = await uploadToStorage({ file, folder: `product-images/${activeProductId}` });
+
+          const details = productDetails.get(activeProductId) || { images: [] };
+          const nextOrder = (details.images || []).length;
+
+          const { error } = await supabaseClient.from("product_images").insert({
+            product_id: activeProductId,
+            sort_order: nextOrder,
+            src: publicUrl,
+            alt: "",
+            fit: "cover",
+          });
+
+          if (error) throw error;
+
+          imageFile.value = "";
+          adminMsg.textContent = "Image added.";
+          await loadAll();
+          await openAdminForProduct(activeProductId);
+        } catch (e) {
+          adminMsg.textContent = `Error: ${e.message}`;
+        }
+      });
+
+      imagesList.addEventListener("click", async (e) => {
+        const del = e.target.closest("[data-del-img]");
+        if (!del) return;
+        const imgId = del.getAttribute("data-del-img");
+        if (!confirm("Delete image?")) return;
+
+        adminMsg.textContent = "Deleting image...";
+        const { data: imgRow, error: getErr } = await supabaseClient.from("product_images").select("*").eq("id", imgId).single();
+        if (getErr) { adminMsg.textContent = `Error: ${getErr.message}`; return; }
+
+        const { error: delErr } = await supabaseClient.from("product_images").delete().eq("id", imgId);
+        if (delErr) { adminMsg.textContent = `Error: ${delErr.message}`; return; }
+
+        const imgStoragePath = storagePathFromPublicUrl(imgRow?.src);
+        if (imgStoragePath) {
+          await supabaseClient.storage.from(BUCKET).remove([imgStoragePath]);
+        }
+
+        adminMsg.textContent = "Deleted.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      imagesList.addEventListener("change", async (e) => {
+        const alt = e.target.closest("[data-img-alt]");
+        const fit = e.target.closest("[data-img-fit]");
+        if (!alt && !fit) return;
+
+        const id = alt ? alt.getAttribute("data-img-alt") : fit.getAttribute("data-img-fit");
+        const payload = {};
+        if (alt) payload.alt = alt.value;
+        if (fit) payload.fit = fit.value;
+
+        const { error } = await supabaseClient.from("product_images").update(payload).eq("id", id);
+        adminMsg.textContent = error ? `Error: ${error.message}` : "Updated image meta.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      // =========================
+      // TECH PACKS CRUD (PDF)
+      // =========================
+      uploadTechBtn.addEventListener("click", async () => {
+        if (!activeProductId) { adminMsg.textContent = "Save the product first."; return; }
+        const label = techLabel.value.trim();
+        if (!label) { adminMsg.textContent = "Tech pack label required."; return; }
+
+        const file = techFile.files?.[0];
+        if (!file) { adminMsg.textContent = "Choose a PDF file."; return; }
+
+        adminMsg.textContent = "Uploading PDF...";
+        try {
+          const { path, publicUrl } = await uploadToStorage({ file, folder: `tech-packs/${activeProductId}` });
+
+          const details = productDetails.get(activeProductId) || { techPacks: [] };
+          const nextOrder = (details.techPacks || []).length;
+
+          const { error } = await supabaseClient.from("tech_packs").insert({
+            product_id: activeProductId,
+            sort_order: nextOrder,
+            label,
+            url: publicUrl,
+          });
+
+          if (error) throw error;
+
+          techLabel.value = "";
+          techFile.value = "";
+          adminMsg.textContent = "Tech pack added.";
+          await loadAll();
+          await openAdminForProduct(activeProductId);
+        } catch (e) {
+          adminMsg.textContent = `Error: ${e.message}`;
+        }
+      });
+
+      techList.addEventListener("click", async (e) => {
+        const del = e.target.closest("[data-del-tech]");
+        if (!del) return;
+        const id = del.getAttribute("data-del-tech");
+        if (!confirm("Delete tech pack?")) return;
+
+        adminMsg.textContent = "Deleting tech pack...";
+        const { data: row, error: getErr } = await supabaseClient.from("tech_packs").select("*").eq("id", id).single();
+        if (getErr) { adminMsg.textContent = `Error: ${getErr.message}`; return; }
+
+        const { error } = await supabaseClient.from("tech_packs").delete().eq("id", id);
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        const techStoragePath = storagePathFromPublicUrl(row?.url);
+        if (techStoragePath) {
+          await supabaseClient.storage.from(BUCKET).remove([techStoragePath]);
+        }
+
+        adminMsg.textContent = "Deleted.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      // =========================
+      // ISSUES CRUD
+      // =========================
+      addIssueBtn.addEventListener("click", async () => {
+        if (!activeProductId) { adminMsg.textContent = "Save the product first."; return; }
+        const it = issueText.value.trim();
+        const res = issueResolution.value.trim();
+        if (!it) { adminMsg.textContent = "Issue required."; return; }
+
+        const details = productDetails.get(activeProductId) || { issues: [] };
+        const nextOrder = (details.issues || []).length;
+
+        adminMsg.textContent = "Adding issue...";
+        const { error } = await supabaseClient.from("product_issues").insert({
+          product_id: activeProductId,
+          sort_order: nextOrder,
+          issue: it,
+          resolution: res,
+        });
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        issueText.value = "";
+        issueResolution.value = "";
+        adminMsg.textContent = "Issue added.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      issuesList.addEventListener("click", async (e) => {
+        const del = e.target.closest("[data-del-issue]");
+        if (!del) return;
+        const id = del.getAttribute("data-del-issue");
+        if (!confirm("Delete issue?")) return;
+
+        adminMsg.textContent = "Deleting issue...";
+        const { error } = await supabaseClient.from("product_issues").delete().eq("id", id);
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        adminMsg.textContent = "Deleted.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      // =========================
+      // NOTES CRUD
+      // =========================
+      addNoteBtn.addEventListener("click", async () => {
+        if (!activeProductId) { adminMsg.textContent = "Save the product first."; return; }
+        const note = noteText.value.trim();
+        if (!note) { adminMsg.textContent = "Note required."; return; }
+
+        const details = productDetails.get(activeProductId) || { notes: [] };
+        const nextOrder = (details.notes || []).length;
+
+        adminMsg.textContent = "Adding note...";
+        const { error } = await supabaseClient.from("product_notes").insert({
+          product_id: activeProductId,
+          sort_order: nextOrder,
+          note,
+        });
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        noteText.value = "";
+        adminMsg.textContent = "Note added.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      notesList.addEventListener("click", async (e) => {
+        const del = e.target.closest("[data-del-note]");
+        if (!del) return;
+        const id = del.getAttribute("data-del-note");
+        if (!confirm("Delete note?")) return;
+
+        adminMsg.textContent = "Deleting note...";
+        const { error } = await supabaseClient.from("product_notes").delete().eq("id", id);
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        adminMsg.textContent = "Deleted.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      // =========================
+      // HISTORICAL CRUD
+      // =========================
+      addHistoricalBtn.addEventListener("click", () => {
+        editingHistoricalId = null;
+        histTitle.textContent = "Add note";
+        histMsg.textContent = "";
+        hTitle.value = "";
+        hDate.value = "";
+        hSummary.value = "";
+        deleteHistoricalBtn.classList.add("hidden");
+        openModal(historicalModal);
+      });
+
+      closeHistorical.addEventListener("click", () => closeModal(historicalModal));
+      historicalModal.addEventListener("click", (e) => { if (e.target === historicalModal) closeModal(historicalModal); });
+
+      historicalList.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-edit-hist]");
+        if (!btn) return;
+        const id = btn.getAttribute("data-edit-hist");
+        const entry = historical.find((x) => x.id === id);
+        if (!entry) return;
+
+        editingHistoricalId = id;
+        histTitle.textContent = "Edit note";
+        histMsg.textContent = "";
+        hTitle.value = entry.title || "";
+        hDate.value = entry.updated_date || "";
+        const bullets = Array.isArray(entry.summary) ? entry.summary : [];
+        hSummary.value = bullets.join("\n");
+        deleteHistoricalBtn.classList.remove("hidden");
+        openModal(historicalModal);
+      });
+
+      saveHistoricalBtn.addEventListener("click", async () => {
+        const title = hTitle.value.trim();
+        if (!title) { histMsg.textContent = "Title is required."; return; }
+
+        const updated_date = hDate.value || null;
+        const summary = hSummary.value
+          .split("\n")
+          .map((x) => x.trim())
+          .filter(Boolean);
+
+        histMsg.textContent = "Saving...";
+        if (editingHistoricalId) {
+          const { error } = await supabaseClient
+            .from("historical_notes")
+            .update({ title, updated_date, summary })
+            .eq("id", editingHistoricalId);
+
+          if (error) { histMsg.textContent = `Error: ${error.message}`; return; }
+          histMsg.textContent = "Saved.";
+        } else {
+          const { error } = await supabaseClient
+            .from("historical_notes")
+            .insert({ title, updated_date, summary });
+
+          if (error) { histMsg.textContent = `Error: ${error.message}`; return; }
+          histMsg.textContent = "Created.";
+        }
+
+        await loadAll();
+        closeModal(historicalModal);
+      });
+
+      deleteHistoricalBtn.addEventListener("click", async () => {
+        if (!editingHistoricalId) return;
+        if (!confirm("Delete this historical note?")) return;
+
+        histMsg.textContent = "Deleting...";
+        const { error } = await supabaseClient.from("historical_notes").delete().eq("id", editingHistoricalId);
+        if (error) { histMsg.textContent = `Error: ${error.message}`; return; }
+
+        histMsg.textContent = "Deleted.";
+        editingHistoricalId = null;
+        await loadAll();
+        closeModal(historicalModal);
+      });
+
+      // =========================
+      // INSIGHTS CRUD
+      // =========================
+      addInsightBtn.addEventListener("click", openInsightForNew);
+      closeInsight.addEventListener("click", () => closeModal(insightModal));
+      insightModal.addEventListener("click", (e) => { if (e.target === insightModal) closeModal(insightModal); });
+
+      insightsGrid.addEventListener("click", (e) => {
+        const edit = e.target.closest("[data-edit-insight]");
+        if (edit) {
+          const id = edit.getAttribute("data-edit-insight");
+          const entry = insights.find((x) => String(x.id) === id);
+          openInsightForEdit(entry);
+          return;
+        }
+
+        const del = e.target.closest("[data-del-insight]");
+        if (del) {
+          const id = del.getAttribute("data-del-insight");
+          const entry = insights.find((x) => String(x.id) === id);
+          if (!entry) return;
+          if (!confirm("Delete this insight?")) return;
+          (async () => {
+            insightMsg.textContent = "Deleting...";
+            const { error } = await supabaseClient.from("insights").delete().eq("id", id);
+            if (error) { insightMsg.textContent = `Error: ${error.message}`; return; }
+
+            const storagePath = storagePathFromPublicUrl(entry.image_public_url);
+            if (storagePath) {
+              await supabaseClient.storage.from(BUCKET).remove([storagePath]);
+            }
+
+            insightMsg.textContent = "Deleted.";
+            editingInsightId = null;
+            await loadAll();
+            closeModal(insightModal);
+          })();
+        }
+      });
+
+      uploadInsightImageBtn.addEventListener("click", async () => {
+        const file = iImageFile.files?.[0];
+        if (!file) { insightMsg.textContent = "Choose an image."; return; }
+        insightMsg.textContent = "Uploading image...";
+        try {
+          const { publicUrl } = await uploadToStorage({ file, folder: "insight-images" });
+          iImageUrl.value = publicUrl;
+          iImageFile.value = "";
+          insightMsg.textContent = "Image uploaded.";
+        } catch (e) {
+          insightMsg.textContent = `Error: ${e.message}`;
+        }
+      });
+
+      saveInsightBtn.addEventListener("click", async () => {
+        const title = iTitle.value.trim();
+        if (!title) { insightMsg.textContent = "Title is required."; return; }
+
+        const payload = {
+          title,
+          status: (iStatus.value || "Reviewed").trim(),
+          image_public_url: (iImageUrl.value || "").trim(),
+          notes: iNotes.value.split("\n").map((x) => x.trim()).filter(Boolean),
+          actions: iActions.value.split("\n").map((x) => x.trim()).filter(Boolean),
+          questions: iQuestions.value.split("\n").map((x) => x.trim()).filter(Boolean),
+          updated_at: new Date().toISOString(),
+        };
+
+        insightMsg.textContent = "Saving...";
+        if (editingInsightId) {
+          const { error } = await supabaseClient.from("insights").update(payload).eq("id", editingInsightId);
+          if (error) { insightMsg.textContent = `Error: ${error.message}`; return; }
+          insightMsg.textContent = "Saved.";
+        } else {
+          const { error } = await supabaseClient.from("insights").insert(payload);
+          if (error) { insightMsg.textContent = `Error: ${error.message}`; return; }
+          insightMsg.textContent = "Created.";
+        }
+
+        await loadAll();
+        closeModal(insightModal);
+      });
+
+      deleteInsightBtn.addEventListener("click", async () => {
+        if (!editingInsightId) return;
+        if (!confirm("Delete this insight?")) return;
+
+        insightMsg.textContent = "Deleting...";
+        const entry = insights.find((x) => String(x.id) === String(editingInsightId));
+        const { error } = await supabaseClient.from("insights").delete().eq("id", editingInsightId);
+        if (error) { insightMsg.textContent = `Error: ${error.message}`; return; }
+
+        const storagePath = storagePathFromPublicUrl(entry?.image_public_url);
+        if (storagePath) {
+          await supabaseClient.storage.from(BUCKET).remove([storagePath]);
+        }
+
+        insightMsg.textContent = "Deleted.";
+        editingInsightId = null;
+        await loadAll();
+        closeModal(insightModal);
+      });
+
+      // =========================
       // INIT
       // =========================
-      render();
-      renderHistorical();
-      showRoster();
+      (async function init() {
+        // Show roster by default
+        showRoster();
+
+        // Load from Supabase
+        await loadAll();
+
+        // Ensure UI state
+        render();
+        renderHistorical();
+      })();
     </script>
   </body>
 </html>
