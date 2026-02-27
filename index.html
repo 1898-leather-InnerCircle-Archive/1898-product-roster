@@ -93,6 +93,10 @@
       .image-nav {
         backdrop-filter: blur(8px);
       }
+      .modal-image {
+        max-width: 92vw;
+        max-height: 92vh;
+      }
       .month-card {
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
@@ -571,6 +575,19 @@
       </div>
     </div>
 
+    <!-- IMAGE PREVIEW MODAL -->
+    <div id="imageModal" class="modal-backdrop">
+      <div class="modal modal-image card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm">
+        <div class="flex items-center justify-between gap-4">
+          <p class="text-xs uppercase tracking-widest text-steel">Image preview</p>
+          <button id="closeImagePreview" class="btn rounded-full">Close</button>
+        </div>
+        <div class="mt-4 overflow-hidden border border-line bg-ink">
+          <img id="previewImage" src="" alt="" class="max-h-[72vh] w-full object-contain" />
+        </div>
+      </div>
+    </div>
+
     <script>
       // =========================
       // CONFIG (EDIT THESE)
@@ -680,6 +697,11 @@
       const deleteInsightBtn = document.getElementById("deleteInsightBtn");
       let editingInsightId = null;
 
+      // Image preview modal
+      const imageModal = document.getElementById("imageModal");
+      const closeImagePreview = document.getElementById("closeImagePreview");
+      const previewImage = document.getElementById("previewImage");
+
       // =========================
       // HELPERS
       // =========================
@@ -694,6 +716,11 @@
 
       const openModal = (el) => el.classList.add("open");
       const closeModal = (el) => el.classList.remove("open");
+      const openImagePreview = (src, alt) => {
+        previewImage.src = src || "";
+        previewImage.alt = alt || "";
+        openModal(imageModal);
+      };
 
       const statusLabels = { production: "Production", development: "Development", discontinued: "Discontinued" };
       const statusStyles = {
@@ -729,6 +756,12 @@
         camera: `<svg aria-hidden="true" class="h-5 w-5 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
           <path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a1 1 0 0 1 1-1z"></path>
           <circle cx="12" cy="13" r="3.5"></circle>
+        </svg>`,
+        expand: `<svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M15 3h6v6"></path>
+          <path d="M9 21H3v-6"></path>
+          <path d="M21 3l-7 7"></path>
+          <path d="M3 21l7-7"></path>
         </svg>`,
       };
 
@@ -920,11 +953,24 @@
                   ${icons.arrowRight}
                 </button>
               </div>
-              <div class="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/50 px-2 py-1 text-[10px] uppercase tracking-widest text-white/70">
+              <div class="absolute bottom-3 left-3 rounded-full border border-white/20 bg-black/50 px-2 py-1 text-[10px] uppercase tracking-widest text-white/70">
                 ${index + 1} / ${total}
               </div>
             `
             : "";
+
+        const expandButton = `
+          <button
+            type="button"
+            class="image-nav absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/40 text-white transition opacity-80 hover:opacity-100 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-white/60"
+            data-expand-image="true"
+            data-image-src="${escapeHTML(image.src)}"
+            data-image-alt="${escapeHTML(image.alt || "")}"
+            aria-label="Expand image"
+          >
+            ${icons.expand}
+          </button>
+        `;
 
         return `
           <div class="group relative flex h-64 items-center justify-center overflow-hidden border border-line bg-ink">
@@ -936,6 +982,7 @@
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent"></div>
             ${navControls}
+            ${expandButton}
           </div>
         `;
       };
@@ -1355,6 +1402,16 @@
           activeProductId = null;
           render();
           productButtons.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+
+        const expand = event.target.closest("[data-expand-image]");
+        if (expand) {
+          const src = expand.getAttribute("data-image-src");
+          if (src) {
+            const alt = expand.getAttribute("data-image-alt") || "";
+            openImagePreview(src, alt);
+          }
           return;
         }
 
@@ -1796,6 +1853,17 @@
       addInsightBtn.addEventListener("click", openInsightForNew);
       closeInsight.addEventListener("click", () => closeModal(insightModal));
       insightModal.addEventListener("click", (e) => { if (e.target === insightModal) closeModal(insightModal); });
+
+      closeImagePreview.addEventListener("click", () => {
+        previewImage.src = "";
+        closeModal(imageModal);
+      });
+      imageModal.addEventListener("click", (e) => {
+        if (e.target === imageModal) {
+          previewImage.src = "";
+          closeModal(imageModal);
+        }
+      });
 
       insightsGrid.addEventListener("click", (e) => {
         const edit = e.target.closest("[data-edit-insight]");
