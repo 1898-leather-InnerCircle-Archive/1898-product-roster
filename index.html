@@ -413,6 +413,10 @@
             <input id="pName" class="input mt-2 text-sm text-fg" placeholder="Stanton Glove" />
           </div>
           <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Vanity name</label>
+            <input id="pVanityName" class="input mt-2 text-sm text-fg" placeholder="Stanton" />
+          </div>
+          <div>
             <label class="text-xs uppercase tracking-widest text-steel">Version</label>
             <input id="pVersion" class="input mt-2 text-sm text-fg" placeholder="V1" />
           </div>
@@ -622,6 +626,7 @@
 
       const pSlug = document.getElementById("pSlug");
       const pName = document.getElementById("pName");
+      const pVanityName = document.getElementById("pVanityName");
       const pVersion = document.getElementById("pVersion");
       const pStatus = document.getElementById("pStatus");
       const pDescription = document.getElementById("pDescription");
@@ -842,7 +847,7 @@
 
         return products.filter((p) => {
           const matchesStatus = status === "all" || p.status === status;
-          const searchable = `${p.name} ${p.version || ""} ${p.description || ""} ${p.id || ""}`;
+          const searchable = `${p.name} ${p.vanity_name || ""} ${p.version || ""} ${p.description || ""} ${p.id || ""}`;
           const matchesQuery = !query || sanitize(searchable).includes(query);
           return matchesStatus && matchesQuery;
         });
@@ -954,6 +959,9 @@
 
         const details = productDetails.get(product.id) || { images: [], techPacks: [], issues: [], notes: [] };
         const title = `${product.name}${product.version ? " " + product.version : ""}`.trim();
+        const vanityLine = product.vanity_name
+          ? `<p class="mt-2 text-xs uppercase tracking-widest text-steel">Vanity name: ${escapeHTML(product.vanity_name)}</p>`
+          : "";
 
         const techPacks =
           (details.techPacks || []).length > 0
@@ -1021,6 +1029,7 @@
             <div>
               <h2 class="text-3xl sm:text-4xl font-semibold font-display">${escapeHTML(title)}</h2>
               <p class="mt-3 text-sm text-steel max-w-3xl">${escapeHTML(product.description || "")}</p>
+              ${vanityLine}
               <p class="mt-2 text-xs uppercase tracking-widest text-steel">Slug: ${escapeHTML(product.id)}</p>
             </div>
 
@@ -1246,6 +1255,7 @@
 
         pSlug.value = p.id || "";
         pName.value = p.name || "";
+        pVanityName.value = p.vanity_name || "";
         pVersion.value = p.version || "";
         pStatus.value = p.status || "development";
         pDescription.value = p.description || "";
@@ -1263,6 +1273,7 @@
 
         pSlug.value = "";
         pName.value = "";
+        pVanityName.value = "";
         pVersion.value = "";
         pStatus.value = "development";
         pDescription.value = "";
@@ -1460,6 +1471,7 @@
         const payload = {
           id: slug,
           name: pName.value.trim(),
+          vanity_name: (pVanityName.value || "").trim(),
           version: (pVersion.value || "").trim(),
           status: pStatus.value,
           description: (pDescription.value || "").trim(),
