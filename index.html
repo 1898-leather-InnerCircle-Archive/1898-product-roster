@@ -97,6 +97,17 @@
         max-width: 92vw;
         max-height: 92vh;
       }
+      .zoomable {
+        cursor: zoom-in;
+        transition: transform 0.2s ease, cursor 0.2s ease;
+      }
+      .zoomed {
+        cursor: zoom-out;
+        transform: scale(1.8);
+      }
+      .zoom-container {
+        overflow: hidden;
+      }
       .month-card {
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
@@ -209,6 +220,14 @@
               aria-pressed="false"
             >
               Insights
+            </button>
+            <button
+              id="tabFeedbacks"
+              type="button"
+              class="rounded-full border border-line/80 bg-slate/80 px-4 py-2 text-xs uppercase tracking-widest text-steel transition hover:border-accent/60 hover:text-fg"
+              aria-pressed="false"
+            >
+              Feedbacks
             </button>
           </div>
 
@@ -384,6 +403,20 @@
         </div>
 
         <div id="insightsGrid" class="grid gap-6 lg:grid-cols-2"></div>
+      </section>
+
+      <!-- PAGE 3: FEEDBACKS -->
+      <section id="feedbacksPage" class="mx-auto hidden max-w-6xl px-6 pb-20">
+        <div class="mb-8">
+          <p class="text-xs uppercase tracking-luxe text-steel">Customer &amp; Field Feedback</p>
+          <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+            <h2 class="text-2xl font-semibold font-display">Feedbacks</h2>
+            <button id="addFeedbackBtn" class="btn rounded-full">Add feedback</button>
+          </div>
+          <p class="mt-3 max-w-2xl text-sm text-steel">Loaded from Supabase table <code>feedbacks</code>.</p>
+        </div>
+
+        <div id="feedbacksGrid" class="grid gap-6 lg:grid-cols-2"></div>
       </section>
     </main>
 
@@ -575,6 +608,47 @@
       </div>
     </div>
 
+    <!-- FEEDBACK MODAL -->
+    <div id="feedbackModal" class="modal-backdrop">
+      <div class="modal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-steel">Feedback</p>
+            <h3 class="mt-2 text-2xl font-semibold font-display" id="feedbackTitle">Add feedback</h3>
+          </div>
+          <button id="closeFeedback" class="btn rounded-full">Close</button>
+        </div>
+
+        <div class="mt-6 grid gap-4">
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Title</label>
+            <input id="fTitle" class="input mt-2 text-sm text-fg" />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Source (optional)</label>
+            <input id="fSource" class="input mt-2 text-sm text-fg" placeholder="Client, event, store visit..." />
+          </div>
+          <div>
+            <label class="text-xs uppercase tracking-widest text-steel">Summary</label>
+            <textarea id="fSummary" class="input mt-2 text-sm text-fg" rows="5" placeholder="Short summary of the feedback"></textarea>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <input id="fImageFile" type="file" accept="image/*" class="text-sm text-steel" />
+            <button id="uploadFeedbackImageBtn" class="btn rounded-full">Upload image</button>
+          </div>
+          <div id="feedbackImagesList" class="grid gap-3 sm:grid-cols-2"></div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between gap-3">
+          <span id="feedbackMsg" class="text-sm text-steel"></span>
+          <div class="flex gap-2">
+            <button id="saveFeedbackBtn" class="btn rounded-full">Save</button>
+            <button id="deleteFeedbackBtn" class="btn rounded-full btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- IMAGE PREVIEW MODAL -->
     <div id="imageModal" class="modal-backdrop">
       <div class="modal modal-image card-plate rounded-none border border-line/80 bg-slate/80 p-4 shadow-card backdrop-blur-sm">
@@ -582,8 +656,8 @@
           <p class="text-xs uppercase tracking-widest text-steel">Image preview</p>
           <button id="closeImagePreview" class="btn rounded-full">Close</button>
         </div>
-        <div class="mt-4 overflow-hidden border border-line bg-ink">
-          <img id="previewImage" src="" alt="" class="max-h-[72vh] w-full object-contain" />
+        <div class="zoom-container mt-4 border border-line bg-ink">
+          <img id="previewImage" src="" alt="" class="zoomable max-h-[72vh] w-full object-contain" />
         </div>
       </div>
     </div>
@@ -606,6 +680,7 @@
       let productDetails = new Map(); // product_id -> {images, techPacks, issues, notes}
       let historical = [];
       let insights = [];
+      let feedbacks = [];
       const imageState = {}; // productId -> index
 
       // =========================
@@ -616,6 +691,7 @@
       const productView = document.getElementById("productView");
       const historicalList = document.getElementById("historicalList");
       const insightsGrid = document.getElementById("insightsGrid");
+      const feedbacksGrid = document.getElementById("feedbacksGrid");
       const updatedBadge = document.getElementById("updatedBadge");
 
       const searchInput = document.getElementById("searchInput");
@@ -626,14 +702,17 @@
 
       const tabRoster = document.getElementById("tabRoster");
       const tabInsights = document.getElementById("tabInsights");
+      const tabFeedbacks = document.getElementById("tabFeedbacks");
       const rosterPage = document.getElementById("rosterPage");
       const insightsPage = document.getElementById("insightsPage");
+      const feedbacksPage = document.getElementById("feedbacksPage");
       const rosterFilters = document.getElementById("rosterFilters");
       const calendarSection = document.getElementById("calendarSection");
 
       const createProductBtn = document.getElementById("createProductBtn");
       const addHistoricalBtn = document.getElementById("addHistoricalBtn");
       const addInsightBtn = document.getElementById("addInsightBtn");
+      const addFeedbackBtn = document.getElementById("addFeedbackBtn");
 
       // Admin modal
       const adminModal = document.getElementById("adminModal");
@@ -697,6 +776,22 @@
       const deleteInsightBtn = document.getElementById("deleteInsightBtn");
       let editingInsightId = null;
 
+      // Feedback modal
+      const feedbackModal = document.getElementById("feedbackModal");
+      const closeFeedback = document.getElementById("closeFeedback");
+      const feedbackTitle = document.getElementById("feedbackTitle");
+      const fTitle = document.getElementById("fTitle");
+      const fSource = document.getElementById("fSource");
+      const fSummary = document.getElementById("fSummary");
+      const fImageFile = document.getElementById("fImageFile");
+      const uploadFeedbackImageBtn = document.getElementById("uploadFeedbackImageBtn");
+      const feedbackImagesList = document.getElementById("feedbackImagesList");
+      const feedbackMsg = document.getElementById("feedbackMsg");
+      const saveFeedbackBtn = document.getElementById("saveFeedbackBtn");
+      const deleteFeedbackBtn = document.getElementById("deleteFeedbackBtn");
+      let editingFeedbackId = null;
+      let feedbackImages = [];
+
       // Image preview modal
       const imageModal = document.getElementById("imageModal");
       const closeImagePreview = document.getElementById("closeImagePreview");
@@ -717,6 +812,7 @@
       const openModal = (el) => el.classList.add("open");
       const closeModal = (el) => el.classList.remove("open");
       const openImagePreview = (src, alt) => {
+        previewImage.classList.remove("zoomed");
         previewImage.src = src || "";
         previewImage.alt = alt || "";
         openModal(imageModal);
@@ -844,9 +940,18 @@
 
         insights = insErr ? [] : (ins || []);
 
+        // Feedbacks (optional table)
+        const { data: fb, error: fbErr } = await supabaseClient
+          .from("feedbacks")
+          .select("*")
+          .order("updated_at", { ascending: false });
+
+        feedbacks = fbErr ? [] : (fb || []);
+
         render();
         renderHistorical();
         renderInsights();
+        renderFeedbacks();
       }
 
       async function loadDetailsForProducts(productIds) {
@@ -1207,6 +1312,66 @@
           .join("");
       };
 
+      const renderFeedbacks = () => {
+        if (!feedbacks.length) {
+          feedbacksGrid.innerHTML = `
+            <div class="rounded-none border border-line/80 bg-slate/80 p-6 text-sm text-steel lg:col-span-2">
+              No feedbacks yet (or table not created).
+            </div>
+          `;
+          return;
+        }
+
+        feedbacksGrid.innerHTML = feedbacks
+          .map((x) => {
+            const images = Array.isArray(x.image_urls) ? x.image_urls : [];
+            const imageGrid = images.length
+              ? `
+                <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                  ${images
+                    .slice(0, 4)
+                    .map(
+                      (url) => `
+                      <button
+                        type="button"
+                        class="group relative overflow-hidden border border-line bg-ink"
+                        data-preview-src="${escapeHTML(url)}"
+                        data-preview-alt="${escapeHTML(x.title || "Feedback image")}"
+                      >
+                        <img src="${escapeHTML(url)}" alt="" class="h-40 w-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
+                      </button>
+                    `
+                    )
+                    .join("")}
+                </div>
+              `
+              : `
+                <div class="mt-5 flex h-48 items-center justify-center border border-line bg-ink text-xs uppercase tracking-[0.3em] text-steel">
+                  No images
+                </div>
+              `;
+
+            return `
+            <article class="card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h3 class="text-xl font-semibold font-display">${escapeHTML(x.title || "Feedback")}</h3>
+                  ${x.source ? `<p class="mt-2 text-xs uppercase tracking-widest text-steel">Source: ${escapeHTML(x.source)}</p>` : ""}
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button class="btn rounded-full" data-edit-feedback="${escapeHTML(x.id)}">Edit</button>
+                  <button class="btn rounded-full btn-danger" data-del-feedback="${escapeHTML(x.id)}">Delete</button>
+                </div>
+              </div>
+
+              <p class="mt-4 text-sm text-steel whitespace-pre-line">${escapeHTML(x.summary || "")}</p>
+              ${imageGrid}
+            </article>
+          `;
+          })
+          .join("");
+      };
+
       const render = () => {
         const filtered = getFilteredProducts();
         resultsMeta.textContent = `${filtered.length} product${filtered.length === 1 ? "" : "s"}`;
@@ -1380,6 +1545,62 @@
         openModal(insightModal);
       }
 
+      function renderFeedbackImagesList() {
+        if (!feedbackImages.length) {
+          feedbackImagesList.innerHTML = `<div class="text-sm text-steel">No images yet.</div>`;
+          return;
+        }
+
+        feedbackImagesList.innerHTML = feedbackImages
+          .map(
+            (url, index) => `
+          <div class="rounded-none border border-line bg-ink p-3">
+            <img
+              src="${escapeHTML(url)}"
+              alt=""
+              class="h-40 w-full object-cover border border-line"
+              data-preview-src="${escapeHTML(url)}"
+              data-preview-alt="Feedback image"
+            />
+            <div class="mt-3 flex items-center justify-between gap-2">
+              <span class="text-xs text-steel">Image ${index + 1}</span>
+              <button class="btn rounded-full btn-danger" data-del-feedback-image="${index}">Delete</button>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      function openFeedbackForNew() {
+        editingFeedbackId = null;
+        feedbackTitle.textContent = "Add feedback";
+        feedbackMsg.textContent = "";
+        fTitle.value = "";
+        fSource.value = "";
+        fSummary.value = "";
+        fImageFile.value = "";
+        feedbackImages = [];
+        renderFeedbackImagesList();
+        deleteFeedbackBtn.classList.add("hidden");
+        openModal(feedbackModal);
+      }
+
+      function openFeedbackForEdit(entry) {
+        if (!entry) return;
+        editingFeedbackId = entry.id;
+        feedbackTitle.textContent = "Edit feedback";
+        feedbackMsg.textContent = "";
+        fTitle.value = entry.title || "";
+        fSource.value = entry.source || "";
+        fSummary.value = entry.summary || "";
+        fImageFile.value = "";
+        feedbackImages = Array.isArray(entry.image_urls) ? [...entry.image_urls] : [];
+        renderFeedbackImagesList();
+        deleteFeedbackBtn.classList.remove("hidden");
+        openModal(feedbackModal);
+      }
+
       // =========================
       // EVENTS: ROSTER
       // =========================
@@ -1460,34 +1681,62 @@
         rosterPage.classList.remove("hidden");
         calendarSection.classList.remove("hidden");
         insightsPage.classList.add("hidden");
+        feedbacksPage.classList.add("hidden");
         rosterFilters.classList.remove("hidden");
 
         tabRoster.setAttribute("aria-pressed", "true");
         tabInsights.setAttribute("aria-pressed", "false");
+        tabFeedbacks.setAttribute("aria-pressed", "false");
 
         tabRoster.classList.add("text-fg");
         tabRoster.classList.remove("text-steel");
         tabInsights.classList.add("text-steel");
         tabInsights.classList.remove("text-fg");
+        tabFeedbacks.classList.add("text-steel");
+        tabFeedbacks.classList.remove("text-fg");
       };
 
       const showInsights = () => {
         rosterPage.classList.add("hidden");
         calendarSection.classList.add("hidden");
         insightsPage.classList.remove("hidden");
+        feedbacksPage.classList.add("hidden");
         rosterFilters.classList.add("hidden");
 
         tabRoster.setAttribute("aria-pressed", "false");
         tabInsights.setAttribute("aria-pressed", "true");
+        tabFeedbacks.setAttribute("aria-pressed", "false");
 
         tabInsights.classList.add("text-fg");
         tabInsights.classList.remove("text-steel");
+        tabRoster.classList.add("text-steel");
+        tabRoster.classList.remove("text-fg");
+        tabFeedbacks.classList.add("text-steel");
+        tabFeedbacks.classList.remove("text-fg");
+      };
+
+      const showFeedbacks = () => {
+        rosterPage.classList.add("hidden");
+        calendarSection.classList.add("hidden");
+        insightsPage.classList.add("hidden");
+        feedbacksPage.classList.remove("hidden");
+        rosterFilters.classList.add("hidden");
+
+        tabRoster.setAttribute("aria-pressed", "false");
+        tabInsights.setAttribute("aria-pressed", "false");
+        tabFeedbacks.setAttribute("aria-pressed", "true");
+
+        tabFeedbacks.classList.add("text-fg");
+        tabFeedbacks.classList.remove("text-steel");
+        tabInsights.classList.add("text-steel");
+        tabInsights.classList.remove("text-fg");
         tabRoster.classList.add("text-steel");
         tabRoster.classList.remove("text-fg");
       };
 
       tabRoster.addEventListener("click", showRoster);
       tabInsights.addEventListener("click", showInsights);
+      tabFeedbacks.addEventListener("click", showFeedbacks);
 
       // =========================
       // THEME
@@ -1856,13 +2105,19 @@
 
       closeImagePreview.addEventListener("click", () => {
         previewImage.src = "";
+        previewImage.classList.remove("zoomed");
         closeModal(imageModal);
       });
       imageModal.addEventListener("click", (e) => {
         if (e.target === imageModal) {
           previewImage.src = "";
+          previewImage.classList.remove("zoomed");
           closeModal(imageModal);
         }
+      });
+
+      previewImage.addEventListener("click", () => {
+        previewImage.classList.toggle("zoomed");
       });
 
       insightsGrid.addEventListener("click", (e) => {
@@ -1959,6 +2214,143 @@
         editingInsightId = null;
         await loadAll();
         closeModal(insightModal);
+      });
+
+      // =========================
+      // FEEDBACKS CRUD
+      // =========================
+      addFeedbackBtn.addEventListener("click", openFeedbackForNew);
+      closeFeedback.addEventListener("click", () => closeModal(feedbackModal));
+      feedbackModal.addEventListener("click", (e) => { if (e.target === feedbackModal) closeModal(feedbackModal); });
+
+      feedbacksGrid.addEventListener("click", (e) => {
+        const preview = e.target.closest("[data-preview-src]");
+        if (preview) {
+          const src = preview.getAttribute("data-preview-src");
+          const alt = preview.getAttribute("data-preview-alt") || "";
+          if (src) openImagePreview(src, alt);
+          return;
+        }
+
+        const edit = e.target.closest("[data-edit-feedback]");
+        if (edit) {
+          const id = edit.getAttribute("data-edit-feedback");
+          const entry = feedbacks.find((x) => String(x.id) === id);
+          openFeedbackForEdit(entry);
+          return;
+        }
+
+        const del = e.target.closest("[data-del-feedback]");
+        if (del) {
+          const id = del.getAttribute("data-del-feedback");
+          const entry = feedbacks.find((x) => String(x.id) === id);
+          if (!entry) return;
+          if (!confirm("Delete this feedback?")) return;
+          (async () => {
+            feedbackMsg.textContent = "Deleting...";
+            const { error } = await supabaseClient.from("feedbacks").delete().eq("id", id);
+            if (error) { feedbackMsg.textContent = `Error: ${error.message}`; return; }
+
+            const urls = Array.isArray(entry.image_urls) ? entry.image_urls : [];
+            const paths = urls.map(storagePathFromPublicUrl).filter(Boolean);
+            if (paths.length) {
+              await supabaseClient.storage.from(BUCKET).remove(paths);
+            }
+
+            feedbackMsg.textContent = "Deleted.";
+            editingFeedbackId = null;
+            await loadAll();
+            closeModal(feedbackModal);
+          })();
+        }
+      });
+
+      feedbackImagesList.addEventListener("click", async (e) => {
+        const preview = e.target.closest("[data-preview-src]");
+        if (preview) {
+          const src = preview.getAttribute("data-preview-src");
+          const alt = preview.getAttribute("data-preview-alt") || "";
+          if (src) openImagePreview(src, alt);
+          return;
+        }
+
+        const del = e.target.closest("[data-del-feedback-image]");
+        if (!del) return;
+        const index = Number(del.getAttribute("data-del-feedback-image"));
+        const url = feedbackImages[index];
+        if (!url) return;
+        if (!confirm("Delete image?")) return;
+
+        const storagePath = storagePathFromPublicUrl(url);
+        if (storagePath) {
+          await supabaseClient.storage.from(BUCKET).remove([storagePath]);
+        }
+
+        feedbackImages = feedbackImages.filter((_, i) => i !== index);
+        renderFeedbackImagesList();
+      });
+
+      uploadFeedbackImageBtn.addEventListener("click", async () => {
+        const file = fImageFile.files?.[0];
+        if (!file) { feedbackMsg.textContent = "Choose an image."; return; }
+        feedbackMsg.textContent = "Uploading image...";
+        try {
+          const { publicUrl } = await uploadToStorage({ file, folder: "feedback-images" });
+          feedbackImages = [...feedbackImages, publicUrl];
+          fImageFile.value = "";
+          renderFeedbackImagesList();
+          feedbackMsg.textContent = "Image uploaded.";
+        } catch (e) {
+          feedbackMsg.textContent = `Error: ${e.message}`;
+        }
+      });
+
+      saveFeedbackBtn.addEventListener("click", async () => {
+        const title = fTitle.value.trim();
+        if (!title) { feedbackMsg.textContent = "Title is required."; return; }
+
+        const payload = {
+          title,
+          source: (fSource.value || "").trim(),
+          summary: (fSummary.value || "").trim(),
+          image_urls: feedbackImages,
+          updated_at: new Date().toISOString(),
+        };
+
+        feedbackMsg.textContent = "Saving...";
+        if (editingFeedbackId) {
+          const { error } = await supabaseClient.from("feedbacks").update(payload).eq("id", editingFeedbackId);
+          if (error) { feedbackMsg.textContent = `Error: ${error.message}`; return; }
+          feedbackMsg.textContent = "Saved.";
+        } else {
+          const { error } = await supabaseClient.from("feedbacks").insert(payload);
+          if (error) { feedbackMsg.textContent = `Error: ${error.message}`; return; }
+          feedbackMsg.textContent = "Created.";
+        }
+
+        await loadAll();
+        closeModal(feedbackModal);
+      });
+
+      deleteFeedbackBtn.addEventListener("click", async () => {
+        if (!editingFeedbackId) return;
+        if (!confirm("Delete this feedback?")) return;
+
+        feedbackMsg.textContent = "Deleting...";
+        const entry = feedbacks.find((x) => String(x.id) === String(editingFeedbackId));
+        const { error } = await supabaseClient.from("feedbacks").delete().eq("id", editingFeedbackId);
+        if (error) { feedbackMsg.textContent = `Error: ${error.message}`; return; }
+
+        const urls = Array.isArray(entry?.image_urls) ? entry.image_urls : [];
+        const paths = urls.map(storagePathFromPublicUrl).filter(Boolean);
+        if (paths.length) {
+          await supabaseClient.storage.from(BUCKET).remove(paths);
+        }
+
+        feedbackMsg.textContent = "Deleted.";
+        editingFeedbackId = null;
+        await loadAll();
+        closeModal(feedbackModal);
       });
 
       // =========================
