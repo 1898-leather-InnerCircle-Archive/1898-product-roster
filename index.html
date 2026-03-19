@@ -519,6 +519,20 @@
           </div>
           <div id="notesList" class="mt-4 space-y-2"></div>
         </div>
+
+        <!-- Changes / Ideas -->
+        <div class="mt-8 border-t border-line/80 pt-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-steel">Changes &amp; ideas</h4>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="changeIdea" class="input text-sm text-fg" placeholder="Idea / Cambio..." />
+              <input id="changeRun" class="input text-sm text-fg" placeholder="Run / colección (opcional)" />
+              <button id="addChangeBtn" class="btn rounded-full">Add</button>
+              <button id="cancelChangeEdit" class="btn rounded-full hidden">Cancel</button>
+            </div>
+          </div>
+          <div id="changesList" class="mt-4 space-y-2"></div>
+        </div>
       </div>
     </div>
 
@@ -679,7 +693,7 @@
       // =========================
       let activeProductId = null; // uuid
       let products = [];
-      let productDetails = new Map(); // product_id -> {images, techPacks, issues, notes}
+      let productDetails = new Map(); // product_id -> {images, techPacks, issues, notes, changes}
       let historical = [];
       let insights = [];
       let feedbacks = [];
@@ -751,6 +765,12 @@
       const cancelNoteEdit = document.getElementById("cancelNoteEdit");
       const notesList = document.getElementById("notesList");
 
+      const changeIdea = document.getElementById("changeIdea");
+      const changeRun = document.getElementById("changeRun");
+      const addChangeBtn = document.getElementById("addChangeBtn");
+      const cancelChangeEdit = document.getElementById("cancelChangeEdit");
+      const changesList = document.getElementById("changesList");
+
       // Historical modal
       const historicalModal = document.getElementById("historicalModal");
       const closeHistorical = document.getElementById("closeHistorical");
@@ -798,6 +818,7 @@
 
       let editingIssueId = null;
       let editingNoteId = null;
+      let editingChangeId = null;
 
       // Image preview modal
       const imageModal = document.getElementById("imageModal");
@@ -849,6 +870,10 @@
           <path d="M4 6h.01"></path>
           <path d="M4 12h.01"></path>
           <path d="M4 18h.01"></path>
+        </svg>`,
+        changes: `<svg aria-hidden="true" class="h-4 w-4 text-steel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v5l3 2"></path>
         </svg>`,
         arrowLeft: `<svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <path d="M15 18l-6-6 6-6"></path>
@@ -928,7 +953,7 @@
         const latest = products.reduce((acc, p) => Math.max(acc, new Date(p.updated_at || 0).getTime()), 0);
         updatedBadge.textContent = latest ? formatUpdatedBadge(new Date(latest).toISOString()) : "Updated —";
 
-        // Details (images / tech / issues / notes)
+        // Details (images / tech / issues / notes / changes)
         await loadDetailsForProducts(products.map((p) => p.id));
 
         // Historical
@@ -965,15 +990,16 @@
         productDetails.clear();
         if (!productIds.length) return;
 
-        const [imgRes, techRes, issueRes, noteRes] = await Promise.all([
+        const [imgRes, techRes, issueRes, noteRes, changeRes] = await Promise.all([
           supabaseClient.from("product_images").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
           supabaseClient.from("tech_packs").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
           supabaseClient.from("product_issues").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
           supabaseClient.from("product_notes").select("*").in("product_id", productIds).order("sort_order", { ascending: true }),
+          supabaseClient.from("product_changes").select("*").in("product_id", productIds).order("created_at", { ascending: true }),
         ]);
 
         const ensure = (id) => {
-          if (!productDetails.has(id)) productDetails.set(id, { images: [], techPacks: [], issues: [], notes: [] });
+          if (!productDetails.has(id)) productDetails.set(id, { images: [], techPacks: [], issues: [], notes: [], changes: [] });
           return productDetails.get(id);
         };
 
@@ -981,6 +1007,7 @@
         (techRes.data || []).forEach((x) => ensure(x.product_id).techPacks.push(x));
         (issueRes.data || []).forEach((x) => ensure(x.product_id).issues.push(x));
         (noteRes.data || []).forEach((x) => ensure(x.product_id).notes.push(x));
+        (changeRes.data || []).forEach((x) => ensure(x.product_id).changes.push(x));
       }
 
       // =========================
@@ -1116,7 +1143,7 @@
           return;
         }
 
-        const details = productDetails.get(product.id) || { images: [], techPacks: [], issues: [], notes: [] };
+        const details = productDetails.get(product.id) || { images: [], techPacks: [], issues: [], notes: [], changes: [] };
         const title = `${product.name}${product.version ? " " + product.version : ""}`.trim();
         const vanityLine = product.vanity_name
           ? `<p class="mt-2 text-xs uppercase tracking-widest text-steel">Vanity name: ${escapeHTML(product.vanity_name)}</p>`
@@ -1164,6 +1191,22 @@
                 ${(details.notes || []).map((n) => `<li>• ${escapeHTML(n.note)}</li>`).join("")}
               </ul>`
             : '<p class="mt-3 text-sm text-steel">No next steps yet.</p>';
+
+        const changes =
+          (details.changes || []).length > 0
+            ? `<div class="mt-3 space-y-3">
+                ${(details.changes || [])
+                  .map(
+                    (c) => `
+                    <div class="rounded-none border border-line bg-ink p-3">
+                      <p class="text-sm">${escapeHTML(c.idea || "")}</p>
+                      ${c.run_label ? `<p class="mt-2 text-xs uppercase tracking-widest text-steel">${escapeHTML(c.run_label)}</p>` : ""}
+                    </div>
+                  `
+                  )
+                  .join("")}
+              </div>`
+            : '<p class="mt-3 text-sm text-steel">No ideas yet.</p>';
 
         productView.innerHTML = `
           <article class="reveal card-plate rounded-none border border-line/80 bg-slate/80 p-6 shadow-card backdrop-blur-sm" data-product-id="${escapeHTML(product.id)}">
@@ -1216,6 +1259,13 @@
                   ${icons.notes}<span>Next Steps</span>
                 </h3>
                 ${notes}
+              </section>
+
+              <section class="border-t border-line/80 pt-6">
+                <h3 class="flex items-center gap-2 text-xs uppercase tracking-widest text-steel">
+                  ${icons.changes}<span>Changes &amp; Ideas</span>
+                </h3>
+                ${changes}
               </section>
             </div>
           </article>
@@ -1412,8 +1462,16 @@
         cancelNoteEdit.classList.add("hidden");
       }
 
+      function resetChangeEditor() {
+        editingChangeId = null;
+        changeIdea.value = "";
+        changeRun.value = "";
+        addChangeBtn.textContent = "Add";
+        cancelChangeEdit.classList.add("hidden");
+      }
+
       async function refreshAdminLists(productId) {
-        const details = productDetails.get(productId) || { images: [], techPacks: [], issues: [], notes: [] };
+        const details = productDetails.get(productId) || { images: [], techPacks: [], issues: [], notes: [], changes: [] };
 
         imagesList.innerHTML =
           (details.images || [])
@@ -1483,6 +1541,26 @@
         `
             )
             .join("") || `<div class="text-sm text-steel">No notes yet.</div>`;
+
+        changesList.innerHTML =
+          (details.changes || [])
+            .map(
+              (c) => `
+          <div class="rounded-none border border-line bg-ink p-3">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <div class="text-sm">${escapeHTML(c.idea || "")}</div>
+                ${c.run_label ? `<div class="mt-1 text-xs uppercase tracking-widest text-steel">${escapeHTML(c.run_label)}</div>` : ""}
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="btn rounded-full" data-edit-change="${escapeHTML(c.id)}">Edit</button>
+                <button class="btn rounded-full btn-danger" data-del-change="${escapeHTML(c.id)}">Delete</button>
+              </div>
+            </div>
+          </div>
+        `
+            )
+            .join("") || `<div class="text-sm text-steel">No changes yet.</div>`;
       }
 
       async function openAdminForProduct(productId) {
@@ -1502,6 +1580,7 @@
 
         resetIssueEditor();
         resetNoteEditor();
+        resetChangeEditor();
 
         await refreshAdminLists(productId);
         openModal(adminModal);
@@ -1523,11 +1602,13 @@
 
         resetIssueEditor();
         resetNoteEditor();
+        resetChangeEditor();
 
         imagesList.innerHTML = "";
         techList.innerHTML = "";
         issuesList.innerHTML = "";
         notesList.innerHTML = "";
+        changesList.innerHTML = "";
 
         openModal(adminModal);
       }
@@ -1678,7 +1759,7 @@
 
         const del = event.target.closest("#deleteProductBtn");
         if (del && activeProductId) {
-          if (!confirm("Delete this product? This will remove images/tech/notes/issues too.")) return;
+          if (!confirm("Delete this product? This will remove images/tech/notes/issues/changes too.")) return;
           deleteActiveProduct();
           return;
         }
@@ -2117,6 +2198,82 @@
 
         if (String(editingNoteId) === String(id)) {
           resetNoteEditor();
+        }
+
+        adminMsg.textContent = "Deleted.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      // =========================
+      // CHANGES CRUD
+      // =========================
+      addChangeBtn.addEventListener("click", async () => {
+        if (!activeProductId) { adminMsg.textContent = "Save the product first."; return; }
+        const idea = changeIdea.value.trim();
+        const run_label = changeRun.value.trim();
+        if (!idea) { adminMsg.textContent = "Idea / cambio required."; return; }
+
+        if (editingChangeId) {
+          adminMsg.textContent = "Saving change...";
+          const { error } = await supabaseClient
+            .from("product_changes")
+            .update({ idea, run_label })
+            .eq("id", editingChangeId);
+          if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+          adminMsg.textContent = "Change updated.";
+          resetChangeEditor();
+          await loadAll();
+          await openAdminForProduct(activeProductId);
+          return;
+        }
+
+        adminMsg.textContent = "Adding change...";
+        const { error } = await supabaseClient.from("product_changes").insert({
+          product_id: activeProductId,
+          idea,
+          run_label,
+        });
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        resetChangeEditor();
+        adminMsg.textContent = "Change added.";
+        await loadAll();
+        await openAdminForProduct(activeProductId);
+      });
+
+      cancelChangeEdit.addEventListener("click", () => {
+        resetChangeEditor();
+      });
+
+      changesList.addEventListener("click", async (e) => {
+        const edit = e.target.closest("[data-edit-change]");
+        if (edit) {
+          const id = edit.getAttribute("data-edit-change");
+          const details = productDetails.get(activeProductId) || { changes: [] };
+          const entry = (details.changes || []).find((x) => String(x.id) === String(id));
+          if (!entry) return;
+          editingChangeId = id;
+          changeIdea.value = entry.idea || "";
+          changeRun.value = entry.run_label || "";
+          addChangeBtn.textContent = "Update";
+          cancelChangeEdit.classList.remove("hidden");
+          changeIdea.focus();
+          return;
+        }
+
+        const del = e.target.closest("[data-del-change]");
+        if (!del) return;
+        const id = del.getAttribute("data-del-change");
+        if (!confirm("Delete change?")) return;
+
+        adminMsg.textContent = "Deleting change...";
+        const { error } = await supabaseClient.from("product_changes").delete().eq("id", id);
+        if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        if (String(editingChangeId) === String(id)) {
+          resetChangeEditor();
         }
 
         adminMsg.textContent = "Deleted.";
