@@ -501,6 +501,7 @@
               <input id="issueText" class="input text-sm text-fg" placeholder="Issue..." />
               <input id="issueResolution" class="input text-sm text-fg" placeholder="Resolution..." />
               <button id="addIssueBtn" class="btn rounded-full">Add</button>
+              <button id="cancelIssueEdit" class="btn rounded-full hidden">Cancel</button>
             </div>
           </div>
           <div id="issuesList" class="mt-4 space-y-2"></div>
@@ -513,6 +514,7 @@
             <div class="flex flex-wrap items-center gap-2">
               <input id="noteText" class="input text-sm text-fg" placeholder="Note..." />
               <button id="addNoteBtn" class="btn rounded-full">Add</button>
+              <button id="cancelNoteEdit" class="btn rounded-full hidden">Cancel</button>
             </div>
           </div>
           <div id="notesList" class="mt-4 space-y-2"></div>
@@ -741,10 +743,12 @@
       const issueText = document.getElementById("issueText");
       const issueResolution = document.getElementById("issueResolution");
       const addIssueBtn = document.getElementById("addIssueBtn");
+      const cancelIssueEdit = document.getElementById("cancelIssueEdit");
       const issuesList = document.getElementById("issuesList");
 
       const noteText = document.getElementById("noteText");
       const addNoteBtn = document.getElementById("addNoteBtn");
+      const cancelNoteEdit = document.getElementById("cancelNoteEdit");
       const notesList = document.getElementById("notesList");
 
       // Historical modal
@@ -791,6 +795,9 @@
       const deleteFeedbackBtn = document.getElementById("deleteFeedbackBtn");
       let editingFeedbackId = null;
       let feedbackImages = [];
+
+      let editingIssueId = null;
+      let editingNoteId = null;
 
       // Image preview modal
       const imageModal = document.getElementById("imageModal");
@@ -1390,6 +1397,21 @@
       // =========================
       // ADMIN MODAL HELPERS
       // =========================
+      function resetIssueEditor() {
+        editingIssueId = null;
+        issueText.value = "";
+        issueResolution.value = "";
+        addIssueBtn.textContent = "Add";
+        cancelIssueEdit.classList.add("hidden");
+      }
+
+      function resetNoteEditor() {
+        editingNoteId = null;
+        noteText.value = "";
+        addNoteBtn.textContent = "Add";
+        cancelNoteEdit.classList.add("hidden");
+      }
+
       async function refreshAdminLists(productId) {
         const details = productDetails.get(productId) || { images: [], techPacks: [], issues: [], notes: [] };
 
@@ -1436,7 +1458,10 @@
           <div class="rounded-none border border-line bg-ink p-3">
             <div class="flex items-center justify-between gap-2">
               <div class="text-sm">${escapeHTML(it.issue)}</div>
-              <button class="btn rounded-full btn-danger" data-del-issue="${escapeHTML(it.id)}">Delete</button>
+              <div class="flex items-center gap-2">
+                <button class="btn rounded-full" data-edit-issue="${escapeHTML(it.id)}">Edit</button>
+                <button class="btn rounded-full btn-danger" data-del-issue="${escapeHTML(it.id)}">Delete</button>
+              </div>
             </div>
             <div class="mt-2 text-sm text-steel">Resolution: ${escapeHTML(it.resolution || "")}</div>
           </div>
@@ -1449,8 +1474,11 @@
             .map(
               (n) => `
           <div class="flex items-center justify-between gap-2 rounded-none border border-line bg-ink p-3">
-            <div class="text-sm text-steel">• ${escapeHTML(n.note)}</div>
-            <button class="btn rounded-full btn-danger" data-del-note="${escapeHTML(n.id)}">Delete</button>
+            <div class="text-sm text-steel">&bull; ${escapeHTML(n.note)}</div>
+            <div class="flex items-center gap-2">
+              <button class="btn rounded-full" data-edit-note="${escapeHTML(n.id)}">Edit</button>
+              <button class="btn rounded-full btn-danger" data-del-note="${escapeHTML(n.id)}">Delete</button>
+            </div>
           </div>
         `
             )
@@ -1472,6 +1500,9 @@
         pStatus.value = p.status || "development";
         pDescription.value = p.description || "";
 
+        resetIssueEditor();
+        resetNoteEditor();
+
         await refreshAdminLists(productId);
         openModal(adminModal);
       }
@@ -1489,6 +1520,9 @@
         pVersion.value = "";
         pStatus.value = "development";
         pDescription.value = "";
+
+        resetIssueEditor();
+        resetNoteEditor();
 
         imagesList.innerHTML = "";
         techList.innerHTML = "";
@@ -1941,6 +1975,21 @@
         const res = issueResolution.value.trim();
         if (!it) { adminMsg.textContent = "Issue required."; return; }
 
+        if (editingIssueId) {
+          adminMsg.textContent = "Saving issue...";
+          const { error } = await supabaseClient
+            .from("product_issues")
+            .update({ issue: it, resolution: res })
+            .eq("id", editingIssueId);
+          if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+          adminMsg.textContent = "Issue updated.";
+          resetIssueEditor();
+          await loadAll();
+          await openAdminForProduct(activeProductId);
+          return;
+        }
+
         const details = productDetails.get(activeProductId) || { issues: [] };
         const nextOrder = (details.issues || []).length;
 
@@ -1960,7 +2009,26 @@
         await openAdminForProduct(activeProductId);
       });
 
+      cancelIssueEdit.addEventListener("click", () => {
+        resetIssueEditor();
+      });
+
       issuesList.addEventListener("click", async (e) => {
+        const edit = e.target.closest("[data-edit-issue]");
+        if (edit) {
+          const id = edit.getAttribute("data-edit-issue");
+          const details = productDetails.get(activeProductId) || { issues: [] };
+          const entry = (details.issues || []).find((x) => String(x.id) === String(id));
+          if (!entry) return;
+          editingIssueId = id;
+          issueText.value = entry.issue || "";
+          issueResolution.value = entry.resolution || "";
+          addIssueBtn.textContent = "Update";
+          cancelIssueEdit.classList.remove("hidden");
+          issueText.focus();
+          return;
+        }
+
         const del = e.target.closest("[data-del-issue]");
         if (!del) return;
         const id = del.getAttribute("data-del-issue");
@@ -1969,6 +2037,10 @@
         adminMsg.textContent = "Deleting issue...";
         const { error } = await supabaseClient.from("product_issues").delete().eq("id", id);
         if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        if (String(editingIssueId) === String(id)) {
+          resetIssueEditor();
+        }
 
         adminMsg.textContent = "Deleted.";
         await loadAll();
@@ -1982,6 +2054,21 @@
         if (!activeProductId) { adminMsg.textContent = "Save the product first."; return; }
         const note = noteText.value.trim();
         if (!note) { adminMsg.textContent = "Note required."; return; }
+
+        if (editingNoteId) {
+          adminMsg.textContent = "Saving note...";
+          const { error } = await supabaseClient
+            .from("product_notes")
+            .update({ note })
+            .eq("id", editingNoteId);
+          if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+          adminMsg.textContent = "Note updated.";
+          resetNoteEditor();
+          await loadAll();
+          await openAdminForProduct(activeProductId);
+          return;
+        }
 
         const details = productDetails.get(activeProductId) || { notes: [] };
         const nextOrder = (details.notes || []).length;
@@ -2000,7 +2087,25 @@
         await openAdminForProduct(activeProductId);
       });
 
+      cancelNoteEdit.addEventListener("click", () => {
+        resetNoteEditor();
+      });
+
       notesList.addEventListener("click", async (e) => {
+        const edit = e.target.closest("[data-edit-note]");
+        if (edit) {
+          const id = edit.getAttribute("data-edit-note");
+          const details = productDetails.get(activeProductId) || { notes: [] };
+          const entry = (details.notes || []).find((x) => String(x.id) === String(id));
+          if (!entry) return;
+          editingNoteId = id;
+          noteText.value = entry.note || "";
+          addNoteBtn.textContent = "Update";
+          cancelNoteEdit.classList.remove("hidden");
+          noteText.focus();
+          return;
+        }
+
         const del = e.target.closest("[data-del-note]");
         if (!del) return;
         const id = del.getAttribute("data-del-note");
@@ -2009,6 +2114,10 @@
         adminMsg.textContent = "Deleting note...";
         const { error } = await supabaseClient.from("product_notes").delete().eq("id", id);
         if (error) { adminMsg.textContent = `Error: ${error.message}`; return; }
+
+        if (String(editingNoteId) === String(id)) {
+          resetNoteEditor();
+        }
 
         adminMsg.textContent = "Deleted.";
         await loadAll();
